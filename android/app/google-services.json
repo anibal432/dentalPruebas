@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "287875927706",
+    "project_id": "dentalai-5915",
+    "storage_bucket": "dentalai-5915.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:287875927706:android:abb71c472df3a1e60d5923",
+        "android_client_info": {
+          "package_name": "com.example.dental_umg"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsQ25c_neosOUas2soKh_OSNWriPRsWfc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:287875927706:android:012f66a98300e4f70d5923",
+        "android_client_info": {
+          "package_name": "com.example.flutter_application_2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsQ25c_neosOUas2soKh_OSNWriPRsWfc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
