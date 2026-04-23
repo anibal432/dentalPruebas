@@ -3,13 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'login/screens/login_screen.dart';
-import 'screens/home_screen.dart'; // ✅ Asegúrate de importar HomeScreen
+import 'screens/home_screen.dart';
 import 'login/services/auth_service.dart';
 
+// ── Colores institucionales globales ─────────────────────────
+const Color kPrimary = Color(0xFF3D3D8F);
+const Color kPrimaryLight = Color(0xFF5C5CAF);
+const Color kPrimaryDark = Color(0xFF2A2A6E);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
- 
+
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -31,12 +35,94 @@ class DentalApp extends StatelessWidget {
       title: 'Dental AI',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: kPrimary,
+          primary: kPrimary,
+          secondary: kPrimaryLight,
+          surface: Colors.white,
+        ),
         useMaterial3: true,
-        scaffoldBackgroundColor: Colors.grey[100],
+        scaffoldBackgroundColor: const Color(0xFFF0F0F8),
+
+        // ── AppBar ────────────────────────────────────────────
         appBarTheme: const AppBarTheme(
           elevation: 0,
           centerTitle: true,
+          backgroundColor: kPrimary,
+          foregroundColor: Colors.white,
+        ),
+
+        // ── ElevatedButton ────────────────────────────────────
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: kPrimary,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            elevation: 3,
+            shadowColor: kPrimary.withAlpha(100),
+          ),
+        ),
+
+        // ── OutlinedButton ────────────────────────────────────
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: OutlinedButton.styleFrom(
+            foregroundColor: kPrimary,
+            side: const BorderSide(color: kPrimary),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+
+        // ── TextButton ────────────────────────────────────────
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            foregroundColor: kPrimary,
+          ),
+        ),
+
+        // ── InputDecoration (TextFields) ──────────────────────
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.white,
+          labelStyle: const TextStyle(color: Colors.grey),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: kPrimary, width: 2),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.red),
+          ),
+        ),
+
+        // ── FloatingActionButton ──────────────────────────────
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: kPrimary,
+          foregroundColor: Colors.white,
+        ),
+
+        // ── ProgressIndicator ─────────────────────────────────
+        progressIndicatorTheme: const ProgressIndicatorThemeData(
+          color: kPrimary,
+        ),
+
+        // ── Chip (FilterChip) ─────────────────────────────────
+        chipTheme: ChipThemeData(
+          selectedColor: kPrimary.withAlpha(40),
+          checkmarkColor: kPrimary,
+          labelStyle: const TextStyle(fontSize: 13),
+          backgroundColor: Colors.grey.shade100,
         ),
       ),
       home: const AuthWrapper(),
@@ -57,16 +143,14 @@ class AuthWrapper extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
             body: Center(
-              child: CircularProgressIndicator(color: Colors.teal),
+              child: CircularProgressIndicator(color: kPrimary),
             ),
           );
         }
 
         if (snapshot.hasData && snapshot.data != null) {
-          // ✅ CORREGIDO: Redirigir a HomeScreen en lugar de DentalTipsScreen
           return const HomeScreen();
         } else {
-          // Usuario no autenticado
           return const LoginScreen();
         }
       },

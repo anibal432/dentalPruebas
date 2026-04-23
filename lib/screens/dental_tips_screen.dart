@@ -25,7 +25,7 @@ class _DentalTipsScreenState extends State<DentalTipsScreen> {
 
   Future<void> _loadCategories() async {
     try {
-      List<String> categories = await _service.getCategories();
+      final categories = await _service.getCategories();
       if (mounted) {
         setState(() {
           _categories = ['Todos', ...categories];
@@ -41,7 +41,7 @@ class _DentalTipsScreenState extends State<DentalTipsScreen> {
             'Adultos',
             'Higiene',
             'Prevención',
-            'Emergencias'
+            'Emergencias',
           ];
           _isLoadingCategories = false;
         });
@@ -62,7 +62,7 @@ class _DentalTipsScreenState extends State<DentalTipsScreen> {
       case 'emergencias':
         return Colors.red;
       default:
-        return Colors.teal;
+        return const Color(0xFF3D3D8F);
     }
   }
 
@@ -92,7 +92,7 @@ class _DentalTipsScreenState extends State<DentalTipsScreen> {
           child: SizedBox(
             width: 20,
             height: 20,
-            child: CircularProgressIndicator(color: Colors.teal),
+            child: CircularProgressIndicator(color: Color(0xFF3D3D8F)),
           ),
         ),
       );
@@ -113,19 +113,36 @@ class _DentalTipsScreenState extends State<DentalTipsScreen> {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
             child: FilterChip(
-              label: Text(category),
+              label: Text(
+                category,
+                style: TextStyle(
+                  color: isSelected ? Colors.white : Colors.grey[700],
+                  fontWeight:
+                      isSelected ? FontWeight.w600 : FontWeight.normal,
+                  fontSize: 13,
+                ),
+              ),
               selected: isSelected,
-              onSelected: (selected) {
+              onSelected: (_) {
                 setState(() {
-                  _selectedCategory = category == 'Todos' ? null : category;
+                  _selectedCategory =
+                      category == 'Todos' ? null : category;
                 });
               },
-              selectedColor: Colors.teal.withAlpha(76),
-              checkmarkColor: Colors.teal,
+              selectedColor: const Color(0xFF3D3D8F),
+              checkmarkColor: Colors.white,
+              showCheckmark: true,
               backgroundColor: Colors.grey[100],
-              labelStyle: TextStyle(
-                color: isSelected ? Colors.teal : Colors.grey[700],
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+                side: BorderSide(
+                  color: isSelected
+                      ? const Color(0xFF3D3D8F)
+                      : Colors.grey.shade300,
+                  width: 1,
+                ),
               ),
+              padding: const EdgeInsets.symmetric(horizontal: 4),
             ),
           );
         },
@@ -142,14 +159,10 @@ class _DentalTipsScreenState extends State<DentalTipsScreen> {
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => TipDetailScreen(tip: tip),
-            ),
-          );
-        },
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => TipDetailScreen(tip: tip)),
+        ),
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -202,17 +215,6 @@ class _DentalTipsScreenState extends State<DentalTipsScreen> {
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Icon(Icons.calendar_today, size: 14, color: Colors.grey[500]),
-                  const SizedBox(width: 4),
-                  Text(
-                    '${tip.createdAt.day}/${tip.createdAt.month}/${tip.createdAt.year}',
-                    style: TextStyle(color: Colors.grey[500], fontSize: 12),
-                  ),
-                ],
-              ),
             ],
           ),
         ),
@@ -226,7 +228,7 @@ class _DentalTipsScreenState extends State<DentalTipsScreen> {
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: const Text('Consejos Dentales'),
-        backgroundColor: Colors.teal,
+        backgroundColor: const Color(0xFF2A2A6E),
         foregroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
@@ -262,7 +264,8 @@ class _DentalTipsScreenState extends State<DentalTipsScreen> {
 
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
-                    child: CircularProgressIndicator(color: Colors.teal),
+                    child: CircularProgressIndicator(
+                        color: Color(0xFF2A2A6E)),
                   );
                 }
 
@@ -273,7 +276,8 @@ class _DentalTipsScreenState extends State<DentalTipsScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.inbox, size: 80, color: Colors.grey[400]),
+                        Icon(Icons.inbox,
+                            size: 80, color: Colors.grey[400]),
                         const SizedBox(height: 16),
                         Text(
                           _selectedCategory == null
@@ -289,7 +293,7 @@ class _DentalTipsScreenState extends State<DentalTipsScreen> {
                 return ListView.builder(
                   padding: const EdgeInsets.all(12),
                   itemCount: tips.length,
-                  itemBuilder: (context, index) => _buildTipItem(tips[index]),
+                  itemBuilder: (_, i) => _buildTipItem(tips[i]),
                 );
               },
             ),

@@ -1,7 +1,7 @@
-// dental_tip.dart
+// lib/dental_dictionary/models/dental_dictionary_entry.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class DentalTip {
+class DentalDictionaryEntry {
   final String id;
   final String category;
   final String title;
@@ -10,7 +10,7 @@ class DentalTip {
   /// Se guarda en Firestore como bitácora pero NO se muestra en la UI.
   final DateTime createdAt;
 
-  DentalTip({
+  DentalDictionaryEntry({
     required this.id,
     required this.category,
     required this.title,
@@ -18,14 +18,14 @@ class DentalTip {
     DateTime? createdAt,
   }) : createdAt = createdAt ?? DateTime.now();
 
-  factory DentalTip.fromFirestore(DocumentSnapshot doc) {
+  factory DentalDictionaryEntry.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
-    return DentalTip(
+    return DentalDictionaryEntry(
       id: doc.id,
       category: data['category'] ?? '',
       title: data['title'] ?? '',
       description: data['description'] ?? '',
-      // Fallback para documentos antiguos sin el campo.
+      // Si el campo no existe en documentos antiguos, usa DateTime.now() como fallback.
       createdAt: data['createdAt'] != null
           ? (data['createdAt'] as Timestamp).toDate()
           : DateTime.now(),

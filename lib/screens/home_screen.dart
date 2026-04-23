@@ -1,11 +1,11 @@
 // lib/screens/home_screen.dart
 import 'package:flutter/material.dart';
 import 'dental_tips_screen.dart';
-//import '../geolocation/models/dental_clinic.dart';
-
-import '../geolocation/screens/clinic_map_screen.dart'; // ✅ IMPORTAR ClinicMapScreen
+import 'dental_scan_screen.dart';
+import '../location/screens/smart_clinic_screen.dart'; // ← usa la pantalla inteligente
 import '../login/services/auth_service.dart';
 import '../login/screens/login_screen.dart';
+import '../dental_dictionary/screens/dental_dictionary_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -16,10 +16,10 @@ class HomeScreen extends StatelessWidget {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Cerrar Sesión'),
-          content: const Text('¿Estás seguro que deseas cerrar sesión?'),
+          content:
+              const Text('¿Estás seguro que deseas cerrar sesión?'),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+              borderRadius: BorderRadius.circular(12)),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
@@ -42,10 +42,10 @@ class HomeScreen extends StatelessWidget {
       try {
         final authService = AuthService();
         await authService.signOut();
-
         if (context.mounted) {
           Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const LoginScreen()),
+            MaterialPageRoute(
+                builder: (context) => const LoginScreen()),
             (route) => false,
           );
         }
@@ -53,7 +53,8 @@ class HomeScreen extends StatelessWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Error al cerrar sesión: ${e.toString()}'),
+              content:
+                  Text('Error al cerrar sesión: ${e.toString()}'),
               backgroundColor: Colors.red,
             ),
           );
@@ -67,7 +68,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Dental AI'),
-        backgroundColor: Colors.teal,
+        backgroundColor:const Color(0xFF3D3D8F),
         foregroundColor: Colors.white,
         actions: [
           IconButton(
@@ -83,29 +84,54 @@ class HomeScreen extends StatelessWidget {
           crossAxisCount: 2,
           crossAxisSpacing: 16,
           mainAxisSpacing: 16,
+          childAspectRatio: 0.95,
           children: [
             _MenuCard(
-              title: 'Consejos Dentales',
-              icon: Icons.tips_and_updates,
-              color: Colors.blue,
+              title: 'Análisis con IA',
+              icon: Icons.biotech,
+              color: Colors.deepPurple,
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const DentalTipsScreen(),
-                ),
+                    builder: (context) =>
+                        const DentalScanScreen()),
+              ),
+            ),
+            _MenuCard(
+              title: 'Consejos Dentales',
+              icon: Icons.tips_and_updates,
+              color: Colors.deepPurple,
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        const DentalTipsScreen()),
               ),
             ),
             _MenuCard(
               title: 'Clínicas Cercanas',
               icon: Icons.location_on,
-              color: Colors.green,
+              color: Colors.deepPurple,
+              // Abre SmartClinicScreen sin diagnóstico (modo normal)
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const ClinicMapScreen(), // ✅ CORREGIDO: Usar ClinicMapScreen
+                  builder: (context) =>
+                      const SmartClinicScreen(),
                 ),
               ),
             ),
+            _MenuCard(
+              title: 'Diccionario Dental',
+              icon: Icons.menu_book,
+              color: Colors.deepPurple,
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        const DentalDictionaryScreen()),
+              ),
+            ),/*
             _MenuCard(
               title: 'Recordatorios',
               icon: Icons.notifications,
@@ -117,7 +143,7 @@ class HomeScreen extends StatelessWidget {
               icon: Icons.person,
               color: Colors.purple,
               onTap: () => _showMessage(context, 'Próximamente'),
-            ),
+            ),*/
           ],
         ),
       ),
@@ -127,9 +153,8 @@ class HomeScreen extends StatelessWidget {
   void _showMessage(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
-        duration: const Duration(seconds: 2),
-      ),
+          content: Text(message),
+          duration: const Duration(seconds: 2)),
     );
   }
 }
@@ -152,30 +177,31 @@ class _MenuCard extends StatelessWidget {
     return Card(
       elevation: 3,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+          borderRadius: BorderRadius.circular(16)),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
-        child: Container(
-          padding: const EdgeInsets.all(16),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: color.withAlpha(51),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(icon, size: 40, color: color),
+                child: Icon(icon, size: 34, color: color),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
               Text(
                 title,
                 textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
               ),

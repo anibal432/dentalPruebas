@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import '../widgets/custom_textfield.dart';
 import 'login_screen.dart';
-import '../../screens/home_screen.dart'; // ✅ CAMBIADO: Importar HomeScreen
+import '../../screens/home_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -20,58 +20,82 @@ class _RegisterScreenState extends State<RegisterScreen> {
       TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
+  bool _isGoogleLoading = false;
 
+  // ── Email/Contraseña ──────────────────────────────────────
   void _register() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => _isLoading = true);
 
-      try {
-        await _authService.registerWithEmailAndPassword(
-          _emailController.text.trim(),
-          _passwordController.text.trim(),
+    try {
+      await _authService.registerWithEmailAndPassword(
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
+      );
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
         );
-
-        // ✅ CAMBIADO: Navegar a HomeScreen en lugar de DentalTipsScreen
-        if (mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const HomeScreen(),
-            ),
-          );
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error: ${e.toString()}'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      } finally {
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
       }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(_mensajeError(e.toString())),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
-  void _goToLogin() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const LoginScreen(),
-      ),
-    );
+  // ── Google ────────────────────────────────────────────────
+  void _registerWithGoogle() async {
+    setState(() => _isGoogleLoading = true);
+    try {
+      final user = await _authService.signInWithGoogle();
+      if (user != null && mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error con Google: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isGoogleLoading = false);
+    }
+  }
+
+  // ── Mensaje de error legible ──────────────────────────────
+  String _mensajeError(String error) {
+    if (error.contains('email-already-in-use')) {
+      return 'Ya existe una cuenta con ese correo';
+    }
+    if (error.contains('invalid-email')) return 'Correo inválido';
+    if (error.contains('weak-password')) {
+      return 'La contraseña es muy débil';
+    }
+    if (error.contains('too-many-requests')) {
+      return 'Demasiados intentos. Intenta más tarde';
+    }
+    return 'Error al crear la cuenta';
   }
 
   @override
   Widget build(BuildContext context) {
+    final bool anyLoading = _isLoading || _isGoogleLoading;
+
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
@@ -88,9 +112,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 20),
+
                 Text(
                   'Crear Cuenta',
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineMedium
+                      ?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: Colors.teal,
                       ),
@@ -103,59 +131,57 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                 ),
                 const SizedBox(height: 32),
-                // Campo email
+
+                // ── Campos ────────────────────────────────────
                 CustomTextField(
                   label: 'Correo electrónico',
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
+                  validator: (v) {
+                    if (v == null || v.isEmpty) {
                       return 'Por favor ingresa tu email';
                     }
-                    if (!value.contains('@')) {
-                      return 'Ingresa un email válido';
-                    }
+                    if (!v.contains('@')) return 'Ingresa un email válido';
                     return null;
                   },
                 ),
                 const SizedBox(height: 16),
-                // Campo contraseña
                 CustomTextField(
                   label: 'Contraseña',
                   controller: _passwordController,
                   obscureText: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
+                  validator: (v) {
+                    if (v == null || v.isEmpty) {
                       return 'Por favor ingresa tu contraseña';
                     }
-                    if (value.length < 6) {
+                    if (v.length < 6) {
                       return 'La contraseña debe tener al menos 6 caracteres';
                     }
                     return null;
                   },
                 ),
                 const SizedBox(height: 16),
-                // Campo confirmar contraseña
                 CustomTextField(
                   label: 'Confirmar Contraseña',
                   controller: _confirmPasswordController,
                   obscureText: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
+                  validator: (v) {
+                    if (v == null || v.isEmpty) {
                       return 'Por favor confirma tu contraseña';
                     }
-                    if (value != _passwordController.text) {
+                    if (v != _passwordController.text) {
                       return 'Las contraseñas no coinciden';
                     }
                     return null;
                   },
                 ),
                 const SizedBox(height: 24),
-                // Botón de registro
+
+                // ── Botón registro email ──────────────────────
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _isLoading ? null : _register,
+                    onPressed: anyLoading ? null : _register,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.teal,
                       foregroundColor: Colors.white,
@@ -170,7 +196,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             height: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation(Colors.white),
+                              color: Colors.white,
                             ),
                           )
                         : const Text(
@@ -179,12 +205,70 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                   ),
                 ),
+                const SizedBox(height: 12),
+
+                // ── Separador ─────────────────────────────────
+                Row(children: [
+                  Expanded(child: Divider(color: Colors.grey[300])),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Text(
+                      'o',
+                      style: TextStyle(color: Colors.grey[500]),
+                    ),
+                  ),
+                  Expanded(child: Divider(color: Colors.grey[300])),
+                ]),
+                const SizedBox(height: 12),
+
+                // ── Botón Google ──────────────────────────────
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: anyLoading ? null : _registerWithGoogle,
+                    icon: _isGoogleLoading
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.teal,
+                            ),
+                          )
+                        : Image.network(
+                            'https://www.google.com/favicon.ico',
+                            width: 20,
+                            height: 20,
+                            errorBuilder: (_, __, ___) => const Icon(
+                              Icons.g_mobiledata,
+                              color: Colors.red,
+                              size: 24,
+                            ),
+                          ),
+                    label: const Text('Registrarse con Google'),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      side: BorderSide(color: Colors.grey[300]!),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 16),
-                // Botón para ir a login
+
+                // ── Ir a login ────────────────────────────────
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton(
-                    onPressed: _isLoading ? null : _goToLogin,
+                    onPressed: anyLoading
+                        ? null
+                        : () => Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const LoginScreen(),
+                              ),
+                            ),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(

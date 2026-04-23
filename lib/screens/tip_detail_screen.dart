@@ -1,6 +1,5 @@
-//tip_detail_screen.dart
+// tip_detail_screen.dart
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import '../models/dental_tip.dart';
 
 class TipDetailScreen extends StatelessWidget {
@@ -44,9 +43,9 @@ class TipDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color categoryColor = _getCategoryColor(tip.category);
-    IconData categoryIcon = _getCategoryIcon(tip.category);
-    String formattedDate = DateFormat('dd/MM/yyyy').format(tip.createdAt);
+    final categoryColor = _getCategoryColor(tip.category);
+    final categoryIcon = _getCategoryIcon(tip.category);
+    // ── formattedDate eliminado (fecha guardada en Firestore como bitácora) ──
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
@@ -82,11 +81,7 @@ class TipDetailScreen extends StatelessWidget {
                         color: Colors.white.withAlpha(51),
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(
-                        categoryIcon,
-                        size: 50,
-                        color: Colors.white,
-                      ),
+                      child: Icon(categoryIcon, size: 50, color: Colors.white),
                     ),
                     const SizedBox(height: 16),
                     Text(
@@ -115,24 +110,7 @@ class TipDetailScreen extends StatelessWidget {
                       height: 1.3,
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.calendar_today,
-                        size: 16,
-                        color: Colors.grey[600],
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Publicado el $formattedDate',
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
+                  // ── Fila de fecha eliminada de la UI ──
                   const SizedBox(height: 24),
                   const Divider(),
                   const SizedBox(height: 24),
@@ -171,10 +149,7 @@ class TipDetailScreen extends StatelessWidget {
                     ),
                     child: Row(
                       children: [
-                        Icon(
-                          Icons.info_outline,
-                          color: categoryColor,
-                        ),
+                        Icon(Icons.info_outline, color: categoryColor),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
@@ -193,41 +168,6 @@ class TipDetailScreen extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withAlpha(51),
-              blurRadius: 10,
-              offset: const Offset(0, -5),
-            ),
-          ],
-        ),
-        child: SafeArea(
-          child: ElevatedButton.icon(
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Funcionalidad próximamente'),
-                  duration: Duration(seconds: 2),
-                ),
-              );
-            },
-            icon: const Icon(Icons.share),
-            label: const Text('Compartir Consejo'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: categoryColor,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          ),
         ),
       ),
     );
