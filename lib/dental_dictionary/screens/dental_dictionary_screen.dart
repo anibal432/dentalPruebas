@@ -4,13 +4,47 @@ import '../models/dental_dictionary_entry.dart';
 import '../services/dental_dictionary_service.dart';
 import 'dental_dictionary_detail_screen.dart';
 
-// ── Paleta institucional unificada ────────────────────────────
-const Color _kPrimaryDark  = Color(0xFF2A2A6E);
-const Color _kPrimary      = Color(0xFF3D3D8F);
-const Color _kPrimaryLight = Color(0xFF5C5CAF);
-const Color _kAccent       = Color(0xFF8888C8);
-const Color _kLightFill    = Color(0xFFD0D0F0);
-const Color _kSurface      = Color(0xFFF0F0FA);
+// ─── Helpers de categoría ───────────────────────────────────
+
+Color _catColor(String category) {
+  switch (category.toLowerCase()) {
+    case 'enfermedades comunes':
+      return Colors.red;
+    case 'procedimientos':
+      return Colors.blue;
+    case 'anatomía':
+      return Colors.green;
+    case 'ortodoncia':
+      return Colors.orange;
+    case 'higiene':
+      return Colors.purple;
+    case 'materiales':
+      return Colors.brown;
+    default:
+      return Colors.teal;
+  }
+}
+
+IconData _catIcon(String category) {
+  switch (category.toLowerCase()) {
+    case 'enfermedades comunes':
+      return Icons.sick;
+    case 'procedimientos':
+      return Icons.medical_services;
+    case 'anatomía':
+      return Icons.biotech;
+    case 'ortodoncia':
+      return Icons.straighten;
+    case 'higiene':
+      return Icons.cleaning_services;
+    case 'materiales':
+      return Icons.science;
+    default:
+      return Icons.menu_book;
+  }
+}
+
+// ───────────────────────────────────────────────────────────
 
 class DentalDictionaryScreen extends StatefulWidget {
   const DentalDictionaryScreen({super.key});
@@ -23,7 +57,7 @@ class DentalDictionaryScreen extends StatefulWidget {
 class _DentalDictionaryScreenState extends State<DentalDictionaryScreen> {
   final DentalDictionaryService _service = DentalDictionaryService();
 
-  // ── Estado ────────────────────────────────────────────────
+  // Estado principal
   List<DentalDictionaryEntry> _allEntries = [];
   bool _isLoading = true;
   String? _errorMessage;
@@ -38,13 +72,16 @@ class _DentalDictionaryScreenState extends State<DentalDictionaryScreen> {
     'N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
   ];
 
+  // ── Lifecycle ─────────────────────────────────────────────
+
   @override
   void initState() {
     super.initState();
     _loadData();
   }
 
-  // ── Carga única — filtrado 100% local ─────────────────────
+  // ── Carga de datos ────────────────────────────────────────
+
   Future<void> _loadData() async {
     if (!mounted) return;
     setState(() {
@@ -62,138 +99,87 @@ class _DentalDictionaryScreenState extends State<DentalDictionaryScreen> {
       setState(() {
         _allEntries = results[0] as List<DentalDictionaryEntry>;
         _categories = ['Todas', ...(results[1] as List<String>)];
-        _isLoading  = false;
+        _isLoading = false;
       });
     } catch (e) {
       if (!mounted) return;
       setState(() {
         _errorMessage = 'Error: $e';
-        _isLoading    = false;
+        _isLoading = false;
       });
     }
   }
 
-  // ── Filtrado local (sin Firestore) ────────────────────────
+  Future<void> _loadByCategory(String category) async {
+    if (!mounted) return;
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final entries = await _service.getEntriesByCategory(category);
+      if (!mounted) return;
+      setState(() {
+        _allEntries = entries;
+        _isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = 'Error al filtrar por categoría.';
+        _isLoading = false;
+      });
+    }
+  }
+
+  // ── Filtrado por letra ────────────────────────────────────
+
   List<DentalDictionaryEntry> get _filtered {
-    var list = _allEntries;
-
-    if (_selectedCategory != null) {
-      list = list.where((e) => e.category == _selectedCategory).toList();
-    }
-
-    if (_selectedLetter != null) {
-      list = list
-          .where((e) => e.title.toUpperCase().startsWith(_selectedLetter!))
-          .toList();
-    }
-
-    return list;
+    if (_selectedLetter == null) return _allEntries;
+    return _allEntries
+        .where((e) => e.title.toUpperCase().startsWith(_selectedLetter!))
+        .toList();
   }
 
-  // ── Letras disponibles según categoría activa ─────────────
-  // ✅ FIX: calcula sobre entradas ya filtradas por categoría,
-  //    no sobre _allEntries, para que las letras sin resultados
-  //    aparezcan deshabilitadas correctamente.
-  Set<String> get _availableLetters {
-    var list = _allEntries;
-    if (_selectedCategory != null) {
-      list = list.where((e) => e.category == _selectedCategory).toList();
-    }
-    return list
-        .where((e) => e.title.isNotEmpty)
-        .map((e) => e.title[0].toUpperCase())
-        .toSet();
-  }
+  // ── Widgets ───────────────────────────────────────────────
 
-  // ── Color único por categoría (variaciones del azul) ─────
-  Color _catColor(String category) {
-    switch (category.toLowerCase()) {
-      case 'enfermedades comunes':
-        return _kPrimary;
-      case 'procedimientos':
-        return _kPrimaryDark;
-      case 'anatomía':
-      case 'anatomía dental':
-        return _kPrimaryLight;
-      case 'ortodoncia':
-        return _kAccent;
-      case 'higiene':
-        return _kPrimary;
-      case 'materiales':
-        return _kPrimaryDark;
-      case 'tratamientos dentales':
-      case 'tratamientos':
-        return _kPrimaryLight;
-      default:
-        return _kPrimary;
-    }
-  }
-
-  IconData _catIcon(String category) {
-    switch (category.toLowerCase()) {
-      case 'enfermedades comunes':
-        return Icons.sick_outlined;
-      case 'procedimientos':
-        return Icons.medical_services_outlined;
-      case 'anatomía':
-      case 'anatomía dental':
-        return Icons.biotech_outlined;
-      case 'ortodoncia':
-        return Icons.straighten;
-      case 'higiene':
-        return Icons.clean_hands_outlined;
-      case 'materiales':
-        return Icons.science_outlined;
-      case 'tratamientos dentales':
-      case 'tratamientos':
-        return Icons.healing_outlined;
-      default:
-        return Icons.menu_book_outlined;
-    }
-  }
-
-  // ── Filtro de categorías ──────────────────────────────────
   Widget _buildCategoryFilter() {
     return Container(
       height: 52,
       color: Colors.white,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         itemCount: _categories.length,
         itemBuilder: (context, index) {
           final cat = _categories[index];
           final isSelected = _selectedCategory == cat ||
               (_selectedCategory == null && cat == 'Todas');
           return Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: GestureDetector(
-              onTap: () => setState(() {
-                _selectedCategory = cat == 'Todas' ? null : cat;
-                // ✅ Resetea la letra al cambiar categoría
-                _selectedLetter   = null;
-              }),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 180),
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 14, vertical: 5),
-                decoration: BoxDecoration(
-                  color: isSelected ? _kPrimary : Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: isSelected ? _kPrimary : _kLightFill,
-                    width: isSelected ? 1.5 : 1,
-                  ),
-                ),
-                child: Text(
-                  cat,
-                  style: TextStyle(
-                    color: isSelected ? Colors.white : _kPrimaryLight,
-                    fontWeight:
-                        isSelected ? FontWeight.w600 : FontWeight.normal,
-                    fontSize: 13,
-                  ),
-                ),
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: FilterChip(
+              label: Text(cat, style: const TextStyle(fontSize: 13)),
+              selected: isSelected,
+              onSelected: (_) {
+                final newCat = cat == 'Todas' ? null : cat;
+                setState(() {
+                  _selectedCategory = newCat;
+                  _selectedLetter = null;
+                });
+                if (newCat == null) {
+                  _loadData();
+                } else {
+                  _loadByCategory(newCat);
+                }
+              },
+              selectedColor: const Color(0xFF3D3D8F).withAlpha(51),
+              checkmarkColor: const Color(0xFF3D3D8F),
+              backgroundColor: Colors.grey[100],
+              labelStyle: TextStyle(
+                color: isSelected ? const Color(0xFF3D3D8F) : Colors.grey[700],
+                fontWeight:
+                    isSelected ? FontWeight.w600 : FontWeight.normal,
               ),
             ),
           );
@@ -202,10 +188,11 @@ class _DentalDictionaryScreenState extends State<DentalDictionaryScreen> {
     );
   }
 
-  // ── Índice alfabético ─────────────────────────────────────
   Widget _buildAlphabetIndex() {
-    // ✅ FIX: usa _availableLetters que respeta la categoría activa
-    final available = _availableLetters;
+    final available = _allEntries
+        .where((e) => e.title.isNotEmpty)
+        .map((e) => e.title[0].toUpperCase())
+        .toSet();
 
     return Container(
       height: 44,
@@ -229,22 +216,21 @@ class _DentalDictionaryScreenState extends State<DentalDictionaryScreen> {
                 _selectedLetter = label == 'Todas' ? null : label;
               })
           : null,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
+      child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 3),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         decoration: BoxDecoration(
           color: selected
-              ? _kPrimaryDark
+              ? Colors.teal
               : active
                   ? Colors.white
                   : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: selected
-                ? _kPrimaryDark
+                ? Colors.teal
                 : active
-                    ? _kLightFill
+                    ? Colors.grey.shade300
                     : Colors.transparent,
           ),
         ),
@@ -256,7 +242,7 @@ class _DentalDictionaryScreenState extends State<DentalDictionaryScreen> {
             color: selected
                 ? Colors.white
                 : active
-                    ? _kPrimaryLight
+                    ? Colors.grey[800]
                     : Colors.grey[400],
           ),
         ),
@@ -264,19 +250,14 @@ class _DentalDictionaryScreenState extends State<DentalDictionaryScreen> {
     );
   }
 
-  // ── Tarjeta de entrada ────────────────────────────────────
   Widget _buildEntryCard(DentalDictionaryEntry entry) {
     final color = _catColor(entry.category);
-    final icon  = _catIcon(entry.category);
+    final icon = _catIcon(entry.category);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 10),
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
-        side: const BorderSide(color: _kLightFill, width: 1),
-      ),
-      color: Colors.white,
+      elevation: 1,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: () => Navigator.push(
           context,
@@ -284,57 +265,46 @@ class _DentalDictionaryScreenState extends State<DentalDictionaryScreen> {
             builder: (_) => DentalDictionaryDetailScreen(entry: entry),
           ),
         ),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(14),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── Avatar con inicial ──────────────────────
               Container(
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: _kSurface,
+                  color: color.withAlpha(25),
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: _kLightFill),
                 ),
                 child: Center(
                   child: Text(
-                    entry.title.isNotEmpty
-                        ? entry.title[0].toUpperCase()
-                        : '?',
+                    entry.title.isNotEmpty ? entry.title[0].toUpperCase() : '?',
                     style: TextStyle(
                       color: color,
-                      fontSize: 22,
+                      fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ── Título ──────────────────────────────
                     Text(
                       entry.title,
                       style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1A1A3E),
-                      ),
+                          fontSize: 16, fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(height: 5),
-                    // ── Badge de categoría ──────────────────
+                    const SizedBox(height: 4),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 3),
+                          horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        color: _kSurface,
+                        color: color.withAlpha(20),
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: _kLightFill),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -344,31 +314,27 @@ class _DentalDictionaryScreenState extends State<DentalDictionaryScreen> {
                           Text(
                             entry.category,
                             style: TextStyle(
-                              color: color,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                            ),
+                                color: color,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600),
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 6),
-                    // ── Descripción corta ───────────────────
                     Text(
                       entry.description,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 13,
-                        height: 1.4,
-                      ),
+                          color: Colors.grey[600],
+                          fontSize: 13,
+                          height: 1.4),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: 6),
-              const Icon(Icons.chevron_right, color: _kAccent, size: 20),
+              const Icon(Icons.chevron_right, color: Colors.grey),
             ],
           ),
         ),
@@ -380,13 +346,11 @@ class _DentalDictionaryScreenState extends State<DentalDictionaryScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.menu_book_outlined, size: 72, color: _kLightFill),
+            Icon(Icons.menu_book, size: 72, color: Colors.grey[300]),
             const SizedBox(height: 16),
-            Text(
-              msg,
-              style: const TextStyle(color: _kAccent, fontSize: 15),
-              textAlign: TextAlign.center,
-            ),
+            Text(msg,
+                style: TextStyle(color: Colors.grey[500], fontSize: 15),
+                textAlign: TextAlign.center),
           ],
         ),
       );
@@ -408,7 +372,7 @@ class _DentalDictionaryScreenState extends State<DentalDictionaryScreen> {
               icon: const Icon(Icons.refresh),
               label: const Text('Reintentar'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: _kPrimary,
+                backgroundColor: const Color(0xFF3D3D8F),
                 foregroundColor: Colors.white,
               ),
             ),
@@ -416,15 +380,17 @@ class _DentalDictionaryScreenState extends State<DentalDictionaryScreen> {
         ),
       );
 
+  // ── Build ─────────────────────────────────────────────────
+
   @override
   Widget build(BuildContext context) {
     final filtered = _filtered;
 
     return Scaffold(
-      backgroundColor: _kSurface,
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: const Text('Diccionario Dental'),
-        backgroundColor: _kPrimaryDark,
+        backgroundColor: const Color(0xFF3D3D8F),
         foregroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
@@ -438,20 +404,20 @@ class _DentalDictionaryScreenState extends State<DentalDictionaryScreen> {
           if (_categories.length > 1) _buildCategoryFilter(),
 
           // Índice alfabético
-          if (!_isLoading && _errorMessage == null) _buildAlphabetIndex(),
+          if (!_isLoading && _errorMessage == null)
+            _buildAlphabetIndex(),
 
           // Contador
           if (!_isLoading && _errorMessage == null && filtered.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 10, 16, 2),
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 4),
               child: Row(
                 children: [
-                  const Icon(Icons.menu_book_outlined,
-                      size: 14, color: _kAccent),
+                  Icon(Icons.menu_book, size: 14, color: Colors.grey[500]),
                   const SizedBox(width: 6),
                   Text(
                     '${filtered.length} término${filtered.length != 1 ? 's' : ''}',
-                    style: const TextStyle(color: _kAccent, fontSize: 13),
+                    style: TextStyle(color: Colors.grey[500], fontSize: 13),
                   ),
                 ],
               ),
@@ -461,7 +427,7 @@ class _DentalDictionaryScreenState extends State<DentalDictionaryScreen> {
           Expanded(
             child: _isLoading
                 ? const Center(
-                    child: CircularProgressIndicator(color: _kPrimary),
+                    child: CircularProgressIndicator(color: Colors.teal),
                   )
                 : _errorMessage != null
                     ? _buildErrorState()
@@ -474,14 +440,12 @@ class _DentalDictionaryScreenState extends State<DentalDictionaryScreen> {
                                     : 'No hay entradas en esta categoría',
                           )
                         : RefreshIndicator(
-                            color: _kPrimary,
+                            color: Colors.teal,
                             onRefresh: _loadData,
                             child: ListView.builder(
-                              padding: const EdgeInsets.fromLTRB(
-                                  12, 4, 12, 16),
+                              padding:
+                                  const EdgeInsets.fromLTRB(12, 4, 12, 16),
                               itemCount: filtered.length,
-                              addAutomaticKeepAlives: false,
-                              addRepaintBoundaries: true,
                               itemBuilder: (_, i) =>
                                   _buildEntryCard(filtered[i]),
                             ),

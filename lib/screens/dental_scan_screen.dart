@@ -1,14 +1,11 @@
 // lib/screens/dental_scan_screen.dart
 import 'dart:io';
+//import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
-import '../location/screens/smart_clinic_screen.dart';
-
-// ── Colores institucionales ───────────────────────────────────
-const Color _kPrimary = Color(0xFF3D3D8F);
-const Color _kPrimaryDark = Color(0xFF2A2A6E);
+import '../location/screens/smart_clinic_screen.dart'; // ← botón "Ver clínicas"
 
 class DentalScanScreen extends StatefulWidget {
   const DentalScanScreen({super.key});
@@ -66,10 +63,12 @@ class _DentalScanScreenState extends State<DentalScanScreen>
       duration: const Duration(milliseconds: 600),
     );
     _pulseAnimation = Tween<double>(begin: 0.95, end: 1.05).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+      CurvedAnimation(
+          parent: _pulseController, curve: Curves.easeInOut),
     );
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _fadeController, curve: Curves.easeOut),
+      CurvedAnimation(
+          parent: _fadeController, curve: Curves.easeOut),
     );
   }
 
@@ -121,11 +120,8 @@ class _DentalScanScreenState extends State<DentalScanScreen>
 
   Future<List> _prepareInput(File imageFile) async {
     final bytes = await imageFile.readAsBytes();
-    final codec = await ui.instantiateImageCodec(
-      bytes,
-      targetWidth: _inputSize,
-      targetHeight: _inputSize,
-    );
+    final codec = await ui.instantiateImageCodec(bytes,
+        targetWidth: _inputSize, targetHeight: _inputSize);
     final frame = await codec.getNextFrame();
     final uiImage = frame.image;
     final byteData =
@@ -312,30 +308,21 @@ class _DentalScanScreenState extends State<DentalScanScreen>
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding:
+            const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Colors.teal.withAlpha(15),
           borderRadius: BorderRadius.circular(30),
-          border: Border.all(color: _kPrimary, width: 1.5),
-          boxShadow: [
-            BoxShadow(
-              color: _kPrimary.withAlpha(40),
-              blurRadius: 8,
-              offset: const Offset(0, 3),
-            ),
-          ],
+          border: Border.all(color: Colors.teal.withAlpha(60)),
         ),
         child: Row(children: [
-          Icon(icon, color: _kPrimary, size: 18),
+          Icon(icon, color: Colors.teal, size: 18),
           const SizedBox(width: 6),
-          Text(
-            label,
-            style: const TextStyle(
-              color: _kPrimary,
-              fontWeight: FontWeight.w600,
-              fontSize: 13,
-            ),
-          ),
+          Text(label,
+              style: const TextStyle(
+                  color: Colors.teal,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13)),
         ]),
       ),
     );
@@ -351,71 +338,51 @@ class _DentalScanScreenState extends State<DentalScanScreen>
             width: 90,
             height: 90,
             decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: _kPrimary.withAlpha(20),
-              border: Border.all(
-                color: _kPrimary.withAlpha(80),
-                width: 2,
-              ),
-            ),
-            child: const Icon(
-              Icons.add_a_photo_outlined,
-              size: 44,
-              color: _kPrimary,
-            ),
+                shape: BoxShape.circle,
+                color: Colors.teal.withAlpha(20)),
+            child: const Icon(Icons.add_a_photo_outlined,
+                size: 44, color: Colors.teal),
           ),
         ),
         const SizedBox(height: 16),
-        const Text(
-          'Sube una foto dental',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            color: _kPrimaryDark,
-          ),
-        ),
+        const Text('Sube una foto dental',
+            style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF1A1A2E))),
         const SizedBox(height: 6),
-        Text(
-          'Foto intraoral, sonrisa o zona afectada',
-          style: TextStyle(fontSize: 13, color: Colors.grey[500]),
-        ),
+        Text('Foto intraoral, sonrisa o zona afectada',
+            style: TextStyle(fontSize: 13, color: Colors.grey[500])),
         const SizedBox(height: 8),
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 24),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          padding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: _kPrimary.withAlpha(15),
+            color: Colors.teal.withAlpha(10),
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: _kPrimary.withAlpha(60)),
+            border: Border.all(color: Colors.teal.withAlpha(40)),
           ),
           child: const Text(
             '💡 Mejor resultado: buena iluminación, sin movimiento, '
             'boca bien abierta a 15-20 cm de distancia.',
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 11,
-              color: _kPrimaryDark,
-              height: 1.4,
-            ),
+                fontSize: 11, color: Colors.teal, height: 1.4),
           ),
         ),
         const SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildSourceButton(
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          _buildSourceButton(
               icon: Icons.photo_library_outlined,
               label: 'Galería',
-              onTap: () => _pickImage(ImageSource.gallery),
-            ),
-            const SizedBox(width: 12),
-            _buildSourceButton(
+              onTap: () => _pickImage(ImageSource.gallery)),
+          const SizedBox(width: 12),
+          _buildSourceButton(
               icon: Icons.camera_alt_outlined,
               label: 'Cámara',
-              onTap: () => _pickImage(ImageSource.camera),
-            ),
-          ],
-        ),
+              onTap: () => _pickImage(ImageSource.camera)),
+        ]),
       ],
     );
   }
@@ -424,33 +391,28 @@ class _DentalScanScreenState extends State<DentalScanScreen>
     return Stack(children: [
       ClipRRect(
         borderRadius: BorderRadius.circular(22),
-        child: Image.file(
-          _selectedImage!,
-          width: double.infinity,
-          height: double.infinity,
-          fit: BoxFit.cover,
-        ),
+        child: Image.file(_selectedImage!,
+            width: double.infinity,
+            height: double.infinity,
+            fit: BoxFit.cover),
       ),
       if (_isAnalyzing)
         Container(
           decoration: BoxDecoration(
-            color: Colors.black.withAlpha(140),
-            borderRadius: BorderRadius.circular(22),
-          ),
+              color: Colors.black.withAlpha(140),
+              borderRadius: BorderRadius.circular(22)),
           child: const Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CircularProgressIndicator(color: _kPrimary, strokeWidth: 3),
+                CircularProgressIndicator(
+                    color: Colors.teal, strokeWidth: 3),
                 SizedBox(height: 16),
-                Text(
-                  'Analizando con IA...',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                Text('Analizando con IA...',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600)),
               ],
             ),
           ),
@@ -459,17 +421,18 @@ class _DentalScanScreenState extends State<DentalScanScreen>
         top: 12,
         right: 12,
         child: GestureDetector(
-          onTap: () => setState(() {
-            _selectedImage = null;
-            _diagnosis = null;
-          }),
+          onTap: () => setState(
+              () {
+                _selectedImage = null;
+                _diagnosis = null;
+              }),
           child: Container(
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: Colors.black.withAlpha(140),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(Icons.close, color: Colors.white, size: 16),
+                color: Colors.black.withAlpha(140),
+                shape: BoxShape.circle),
+            child:
+                const Icon(Icons.close, color: Colors.white, size: 16),
           ),
         ),
       ),
@@ -483,13 +446,14 @@ class _DentalScanScreenState extends State<DentalScanScreen>
             builder: (_) => Container(
               padding: const EdgeInsets.all(24),
               decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-              ),
-              child: Column(mainAxisSize: MainAxisSize.min, children: [
+                  color: Colors.white,
+                  borderRadius:
+                      BorderRadius.vertical(top: Radius.circular(24))),
+              child:
+                  Column(mainAxisSize: MainAxisSize.min, children: [
                 ListTile(
                   leading: const Icon(Icons.photo_library_outlined,
-                      color: _kPrimary),
+                      color: Colors.teal),
                   title: const Text('Galería'),
                   onTap: () {
                     Navigator.pop(context);
@@ -498,7 +462,7 @@ class _DentalScanScreenState extends State<DentalScanScreen>
                 ),
                 ListTile(
                   leading: const Icon(Icons.camera_alt_outlined,
-                      color: _kPrimary),
+                      color: Colors.teal),
                   title: const Text('Cámara'),
                   onTap: () {
                     Navigator.pop(context);
@@ -509,22 +473,19 @@ class _DentalScanScreenState extends State<DentalScanScreen>
             ),
           ),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            padding: const EdgeInsets.symmetric(
+                horizontal: 14, vertical: 8),
             decoration: BoxDecoration(
-              color: _kPrimary,
-              borderRadius: BorderRadius.circular(20),
-            ),
+                color: Colors.teal,
+                borderRadius: BorderRadius.circular(20)),
             child: const Row(children: [
               Icon(Icons.refresh, color: Colors.white, size: 16),
               SizedBox(width: 6),
-              Text(
-                'Cambiar',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+              Text('Cambiar',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600)),
             ]),
           ),
         ),
@@ -538,17 +499,19 @@ class _DentalScanScreenState extends State<DentalScanScreen>
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: _kPrimary.withAlpha(80), width: 2),
+        border:
+            Border.all(color: Colors.teal.withAlpha(80), width: 2),
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: _kPrimary.withAlpha(30),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
+              color: Colors.teal.withAlpha(25),
+              blurRadius: 20,
+              offset: const Offset(0, 8))
         ],
       ),
-      child: _selectedImage == null ? _buildEmptyState() : _buildImagePreview(),
+      child: _selectedImage == null
+          ? _buildEmptyState()
+          : _buildImagePreview(),
     );
   }
 
@@ -558,48 +521,40 @@ class _DentalScanScreenState extends State<DentalScanScreen>
       padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 24),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFF2A2A6E), Color(0xFF2A2A6E)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+            colors: [Color(0xFF2ECC71), Color(0xFF27AE60)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Color(0xFF2A2A6E),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-          ),
+              color: const Color(0xFF2ECC71).withAlpha(80),
+              blurRadius: 16,
+              offset: const Offset(0, 6))
         ],
       ),
       child: Column(children: [
         const Icon(Icons.check_circle, color: Colors.white, size: 64),
         const SizedBox(height: 16),
-        const Text(
-          '¡Dentadura Saludable!',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 22,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
+        const Text('¡Dentadura Saludable!',
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.w800)),
         const SizedBox(height: 6),
         Text(
-          'Confianza: ${(confianza * 100).toStringAsFixed(1)}%',
-          style: TextStyle(
-            color: Colors.white.withAlpha(200),
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+            'Confianza: ${(confianza * 100).toStringAsFixed(1)}%',
+            style: TextStyle(
+                color: Colors.white.withAlpha(200),
+                fontSize: 13,
+                fontWeight: FontWeight.w600)),
         const SizedBox(height: 10),
         Text(
           _descripcionPorLabel('sano'),
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: Colors.white.withAlpha(230),
-            fontSize: 14,
-            height: 1.5,
-          ),
+              color: Colors.white.withAlpha(230),
+              fontSize: 14,
+              height: 1.5),
         ),
       ]),
     );
@@ -627,62 +582,51 @@ class _DentalScanScreenState extends State<DentalScanScreen>
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [color.withAlpha(230), color.withAlpha(170)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+              colors: [color.withAlpha(230), color.withAlpha(170)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight),
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: color.withAlpha(80),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
+                color: color.withAlpha(80),
+                blurRadius: 16,
+                offset: const Offset(0, 6))
           ],
         ),
         child: Row(children: [
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: Colors.white.withAlpha(50),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(_iconPorLabel(label), color: Colors.white, size: 32),
+                color: Colors.white.withAlpha(50),
+                shape: BoxShape.circle),
+            child: Icon(_iconPorLabel(label),
+                color: Colors.white, size: 32),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'DIAGNÓSTICO PRINCIPAL',
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+              const Text('DIAGNÓSTICO PRINCIPAL',
                   style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.8,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  label,
+                      color: Colors.white70,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.8)),
+              const SizedBox(height: 4),
+              Text(label,
                   style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w800)),
+              const SizedBox(height: 4),
+              Text(
                   'Confianza: ${(confianza * 100).toStringAsFixed(1)}%',
                   style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
+                      color: Colors.white,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500)),
+            ]),
           ),
         ]),
       ),
@@ -691,12 +635,13 @@ class _DentalScanScreenState extends State<DentalScanScreen>
         const SizedBox(height: 8),
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 16),
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          padding: const EdgeInsets.symmetric(
+              horizontal: 14, vertical: 10),
           decoration: BoxDecoration(
             color: _colorPorLabel(segundaOpcion).withAlpha(20),
             borderRadius: BorderRadius.circular(12),
-            border:
-                Border.all(color: _colorPorLabel(segundaOpcion).withAlpha(80)),
+            border: Border.all(
+                color: _colorPorLabel(segundaOpcion).withAlpha(80)),
           ),
           child: Row(children: [
             Icon(_iconPorLabel(segundaOpcion),
@@ -706,10 +651,10 @@ class _DentalScanScreenState extends State<DentalScanScreen>
               'También posible: $segundaOpcion '
               '(${(segundaConfianza * 100).toStringAsFixed(1)}%)',
               style: TextStyle(
-                fontSize: 13,
-                color: _colorPorLabel(segundaOpcion).withAlpha(220),
-                fontWeight: FontWeight.w600,
-              ),
+                  fontSize: 13,
+                  color:
+                      _colorPorLabel(segundaOpcion).withAlpha(220),
+                  fontWeight: FontWeight.w600),
             ),
           ]),
         ),
@@ -725,33 +670,28 @@ class _DentalScanScreenState extends State<DentalScanScreen>
           border: Border.all(color: color.withAlpha(60)),
         ),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(Icons.info_outline, color: color, size: 18),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                _descripcionPorLabel(label),
-                style:
-                    TextStyle(fontSize: 13, color: color.withAlpha(220), height: 1.4),
-              ),
-            ),
-          ],
-        ),
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+          Icon(Icons.info_outline, color: color, size: 18),
+          const SizedBox(width: 10),
+          Expanded(
+              child: Text(_descripcionPorLabel(label),
+                  style: TextStyle(
+                      fontSize: 13,
+                      color: color.withAlpha(220),
+                      height: 1.4))),
+        ]),
       ),
 
       if (enfermedades.length > 1) ...[
         const SizedBox(height: 16),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            'Condiciones detectadas',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: Colors.grey[700],
-            ),
-          ),
+          child: Text('Condiciones detectadas',
+              style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.grey[700])),
         ),
         const SizedBox(height: 8),
         ...enfermedades.map((e) => _buildBarra(e.key, e.value)),
@@ -762,17 +702,18 @@ class _DentalScanScreenState extends State<DentalScanScreen>
   Widget _buildBarra(String label, double score) {
     final color = _colorPorLabel(label);
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      margin:
+          const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding:
+          const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(10),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
+              color: Colors.black.withAlpha(10),
+              blurRadius: 8,
+              offset: const Offset(0, 2))
         ],
       ),
       child: Column(children: [
@@ -780,19 +721,15 @@ class _DentalScanScreenState extends State<DentalScanScreen>
           Icon(_iconPorLabel(label), color: color, size: 18),
           const SizedBox(width: 10),
           Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-            ),
-          ),
-          Text(
-            '${(score * 100).toStringAsFixed(1)}%',
-            style: TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: 14,
-              color: color,
-            ),
-          ),
+              child: Text(label,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14))),
+          Text('${(score * 100).toStringAsFixed(1)}%',
+              style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                  color: color)),
         ]),
         const SizedBox(height: 8),
         ClipRRect(
@@ -808,8 +745,11 @@ class _DentalScanScreenState extends State<DentalScanScreen>
     );
   }
 
+  // ── Botón "Ver clínicas especializadas" ────────────────────────────────────
+  // Solo aparece cuando se detecta una patología (no "Sano" ni "No concluyente")
   Widget _buildClinicButton(String detectedLabel) {
-    if (detectedLabel == 'Sano' || detectedLabel == 'No concluyente') {
+    if (detectedLabel == 'Sano' ||
+        detectedLabel == 'No concluyente') {
       return const SizedBox.shrink();
     }
 
@@ -819,24 +759,25 @@ class _DentalScanScreenState extends State<DentalScanScreen>
         onPressed: () => Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) =>
-                SmartClinicScreen(detectedCondition: detectedLabel),
+            builder: (_) => SmartClinicScreen(
+              detectedCondition: detectedLabel, // ← pasa el diagnóstico
+            ),
           ),
         ),
         icon: const Icon(Icons.local_hospital_rounded, size: 20),
         label: const Text(
           'Ver clínicas especializadas',
-          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+          style: TextStyle(
+              fontWeight: FontWeight.w700, fontSize: 15),
         ),
         style: ElevatedButton.styleFrom(
-          backgroundColor: _kPrimaryDark,
+          backgroundColor: Colors.teal.shade700,
           foregroundColor: Colors.white,
           minimumSize: const Size(double.infinity, 52),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
+              borderRadius: BorderRadius.circular(14)),
           elevation: 3,
-          shadowColor: _kPrimary.withAlpha(80),
+          shadowColor: Colors.teal.withAlpha(80),
         ),
       ),
     );
@@ -851,61 +792,59 @@ class _DentalScanScreenState extends State<DentalScanScreen>
     return FadeTransition(
       opacity: _fadeAnimation,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 24),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              'Resultado del Análisis',
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+        const SizedBox(height: 24),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text('Resultado del Análisis',
               style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-                color: Colors.grey[800],
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          if (esSano)
-            _buildResultadoSano(confianza)
-          else
-            _buildResultadoEnfermedad(_diagnosis!),
-          const SizedBox(height: 12),
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.grey[800])),
+        ),
+        const SizedBox(height: 12),
+        if (esSano)
+          _buildResultadoSano(confianza)
+        else
+          _buildResultadoEnfermedad(_diagnosis!),
+        const SizedBox(height: 12),
 
-          // ── Disclaimer ──────────────────────────────────────
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: Colors.amber.withAlpha(25),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.amber.withAlpha(80)),
-            ),
-            child: const Row(
+        // ── Disclaimer ───────────────────────────────────────────
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Colors.amber.withAlpha(25),
+            borderRadius: BorderRadius.circular(12),
+            border:
+                Border.all(color: Colors.amber.withAlpha(80)),
+          ),
+          child: const Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.warning_amber_outlined, color: Colors.amber, size: 18),
-                SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    'Este análisis es orientativo y no reemplaza un '
-                    'diagnóstico profesional. Consulta siempre con un '
-                    'odontólogo certificado.',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.brown,
-                      height: 1.4,
-                    ),
-                  ),
-                ),
-              ],
+            Icon(Icons.warning_amber_outlined,
+                color: Colors.amber, size: 18),
+            SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                'Este análisis es orientativo y no reemplaza un '
+                'diagnóstico profesional. Consulta siempre con un '
+                'odontólogo certificado.',
+                style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.brown,
+                    height: 1.4),
+              ),
             ),
-          ),
+          ]),
+        ),
 
-          _buildClinicButton(label),
-          const SizedBox(height: 32),
-        ],
-      ),
+        // ── Botón Ver Clínicas (solo si hay patología) ───────────
+        _buildClinicButton(label),
+
+        const SizedBox(height: 32),
+      ]),
     );
   }
 
@@ -914,113 +853,95 @@ class _DentalScanScreenState extends State<DentalScanScreen>
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
-        title: const Text(
-          'Análisis Dental IA',
-          style: TextStyle(fontWeight: FontWeight.w700, letterSpacing: -0.3),
-        ),
-        backgroundColor: _kPrimaryDark,
+        title: const Text('Análisis Dental IA',
+            style: TextStyle(
+                fontWeight: FontWeight.w700, letterSpacing: -0.3)),
+        backgroundColor: Colors.teal,
         foregroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Navigator.pop(context)),
         actions: [
           if (!_modelLoaded)
             const Padding(
               padding: EdgeInsets.only(right: 16),
               child: Center(
                 child: SizedBox(
-                  width: 18,
-                  height: 18,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Colors.white,
-                  ),
-                ),
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white)),
               ),
             ),
         ],
       ),
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ── Header ────────────────────────────────────────
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [_kPrimaryDark, _kPrimary],
-                ),
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+          Container(
+            width: double.infinity,
+            padding:
+                const EdgeInsets.fromLTRB(20, 20, 20, 28),
+            decoration: const BoxDecoration(
+                color: Colors.teal,
                 borderRadius: BorderRadius.vertical(
-                  bottom: Radius.circular(28),
-                ),
-              ),
-              child: Column(
+                    bottom: Radius.circular(28))),
+            child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Diagnóstico con IA',
-                    style: TextStyle(
+              const Text('Diagnóstico con IA',
+                  style: TextStyle(
                       color: Colors.white,
                       fontSize: 26,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    'Detecta: Caries · Aftas bucales · Gingivitis · '
-                    'Sarro · Dentadura sana',
-                    style: TextStyle(
+                      fontWeight: FontWeight.w800)),
+              const SizedBox(height: 6),
+              Text(
+                  'Detecta: Caries · Aftas bucales · Gingivitis · '
+                  'Sarro · Dentadura sana',
+                  style: TextStyle(
                       color: Colors.white.withAlpha(200),
                       fontSize: 13,
-                      height: 1.5,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withAlpha(30),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          _modelLoaded ? Icons.check_circle : Icons.sync,
+                      height: 1.5)),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                    color: Colors.white.withAlpha(30),
+                    borderRadius: BorderRadius.circular(20)),
+                child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                  Icon(
+                      _modelLoaded
+                          ? Icons.check_circle
+                          : Icons.sync,
+                      color: _modelLoaded
+                          ? Colors.greenAccent
+                          : Colors.orangeAccent,
+                      size: 14),
+                  const SizedBox(width: 6),
+                  Text(
+                      _modelLoaded
+                          ? 'Modelo listo'
+                          : 'Cargando modelo...',
+                      style: TextStyle(
                           color: _modelLoaded
-                              ? Color(0xFF2A2A6E)
+                              ? Colors.greenAccent
                               : Colors.orangeAccent,
-                          size: 14,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          _modelLoaded ? 'Modelo listo' : 'Cargando modelo...',
-                          style: TextStyle(
-                            color: _modelLoaded
-                                ? Colors.greenAccent
-                                : Colors.orangeAccent,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600)),
+                ]),
               ),
-            ),
-            const SizedBox(height: 20),
-            _buildImagePicker(),
-            _buildResults(),
-          ],
-        ),
+            ]),
+          ),
+          const SizedBox(height: 20),
+          _buildImagePicker(),
+          _buildResults(),
+        ]),
       ),
     );
   }

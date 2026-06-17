@@ -50,6 +50,7 @@ class _ClinicMapScreenState extends State<ClinicMapScreen> {
       } else {
         setState(() => _isLoading = false);
         if (mounted) {
+          // Verificar si fue denegado permanentemente para mostrar mensaje diferente
           bool permanentlyDenied =
               await _locationService.isPermissionPermanentlyDenied();
           if (mounted) _showLocationFailedDialog(permanentlyDenied);
@@ -70,7 +71,10 @@ class _ClinicMapScreenState extends State<ClinicMapScreen> {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         icon: const Icon(Icons.location_off, color: Colors.orange, size: 36),
-        title: const Text('Ubicación no disponible', textAlign: TextAlign.center),
+        title: const Text(
+          'Ubicación no disponible',
+          textAlign: TextAlign.center,
+        ),
         content: Text(
           permanentlyDenied
               ? 'El permiso de ubicación fue denegado permanentemente. '
@@ -90,7 +94,7 @@ class _ClinicMapScreenState extends State<ClinicMapScreen> {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF3D3D8F),
+              backgroundColor: Colors.teal,
               foregroundColor: Colors.white,
             ),
             onPressed: () {
@@ -168,7 +172,7 @@ class _ClinicMapScreenState extends State<ClinicMapScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mapa de Clínicas'),
-        backgroundColor: const Color(0xFF3D3D8F),
+        backgroundColor: Colors.teal,
         foregroundColor: Colors.white,
         actions: [
           IconButton(
@@ -188,7 +192,7 @@ class _ClinicMapScreenState extends State<ClinicMapScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircularProgressIndicator(color: Color(0xFF3D3D8F)),
+                  CircularProgressIndicator(color: Colors.teal),
                   SizedBox(height: 16),
                   Text('Buscando clínicas cercanas...'),
                   SizedBox(height: 8),
@@ -216,13 +220,13 @@ class _ClinicMapScreenState extends State<ClinicMapScreen> {
                   heroTag: 'refresh',
                   onPressed: _loadNearbyClinics,
                   backgroundColor: Colors.white,
-                  child: const Icon(Icons.refresh, color: Color(0xFF3D3D8F)),
+                  child: const Icon(Icons.refresh, color: Colors.teal),
                 ),
                 const SizedBox(height: 8),
                 FloatingActionButton(
                   heroTag: 'location',
                   onPressed: _centerOnUser,
-                  backgroundColor: const Color(0xFF3D3D8F),
+                  backgroundColor: Colors.teal,
                   child: const Icon(Icons.my_location),
                 ),
               ],
@@ -257,8 +261,8 @@ class _ClinicMapScreenState extends State<ClinicMapScreen> {
               ),
               radius: _radiusKm * 1000,
               useRadiusInMeter: true,
-              color: const Color(0xFF3D3D8F).withAlpha(25),
-              borderColor: const Color(0xFF3D3D8F).withAlpha(77),
+              color: Colors.blue.withAlpha(25),
+              borderColor: Colors.blue.withAlpha(77),
               borderStrokeWidth: 2,
             ),
           ],
@@ -275,7 +279,7 @@ class _ClinicMapScreenState extends State<ClinicMapScreen> {
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: _isRealLocation ? const Color(0xFF3D3D8F) : Colors.orange,
+                  color: _isRealLocation ? Colors.blue : Colors.orange,
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.white, width: 3),
                   boxShadow: [
@@ -402,14 +406,17 @@ class _ClinicMapScreenState extends State<ClinicMapScreen> {
                   children: [
                     Text(
                       '${_nearbyClinics.length} clínicas',
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     Chip(
                       label: Text('${_radiusKm.toInt()} km'),
                       avatar: const Icon(Icons.location_on, size: 16),
-                      backgroundColor: const Color(0xFFF0F0FA),
-                      labelStyle: const TextStyle(
-                        color: Color(0xFF2A2A6E),
+                      backgroundColor: Colors.teal.shade50,
+                      labelStyle: TextStyle(
+                        color: Colors.teal.shade700,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -444,7 +451,11 @@ class _ClinicMapScreenState extends State<ClinicMapScreen> {
           const SizedBox(height: 16),
           Text(
             'No se encontraron clínicas',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.grey.shade700),
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey.shade700,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
@@ -460,7 +471,7 @@ class _ClinicMapScreenState extends State<ClinicMapScreen> {
             icon: const Icon(Icons.zoom_out_map),
             label: const Text('Ampliar búsqueda'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF3D3D8F),
+              backgroundColor: Colors.teal,
               foregroundColor: Colors.white,
             ),
           ),
@@ -500,7 +511,8 @@ class _ClinicMapScreenState extends State<ClinicMapScreen> {
                     clinic.address,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
+                    style:
+                        TextStyle(fontSize: 13, color: Colors.grey.shade700),
                   ),
                 ),
               ],
@@ -508,7 +520,8 @@ class _ClinicMapScreenState extends State<ClinicMapScreen> {
             const SizedBox(height: 4),
             Row(
               children: [
-                Icon(Icons.directions_walk, size: 14, color: Colors.blue.shade700),
+                Icon(Icons.directions_walk,
+                    size: 14, color: Colors.blue.shade700),
                 const SizedBox(width: 4),
                 Text(
                   '${clinic.distanceInKm?.toStringAsFixed(2) ?? '?'} km',
@@ -565,9 +578,12 @@ class _ClinicMapScreenState extends State<ClinicMapScreen> {
               icon: const Icon(Icons.refresh),
               label: const Text('Reintentar'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF3D3D8F),
+                backgroundColor: Colors.teal,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 16,
+                ),
               ),
             ),
             const SizedBox(height: 12),
