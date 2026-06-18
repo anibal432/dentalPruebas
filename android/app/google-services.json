@@ -12,7 +12,20 @@
           "package_name": "com.example.dental_umg"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "287875927706-chb171ihb42clihkocj7kmbbb2sqpqpm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dental_umg",
+            "certificate_hash": "0729bebaec7f6bf39426edea7fcaa8ebbf0b48a2"
+          }
+        },
+        {
+          "client_id": "287875927706-ut5514lnn65opqfbmldqcft1kv0ahbjp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAsQ25c_neosOUas2soKh_OSNWriPRsWfc"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "287875927706-ut5514lnn65opqfbmldqcft1kv0ahbjp.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "287875927706-1fv7frro5a7ngerl38clktq9ke7tvk85.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.dentalUmg"
+              }
+            }
+          ]
         }
       }
     },
@@ -31,7 +56,20 @@
           "package_name": "com.example.flutter_application_2"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "287875927706-1bph6dg1g7ri601ap0mlc05n7m6facrj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.flutter_application_2",
+            "certificate_hash": "0729bebaec7f6bf39426edea7fcaa8ebbf0b48a2"
+          }
+        },
+        {
+          "client_id": "287875927706-ut5514lnn65opqfbmldqcft1kv0ahbjp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAsQ25c_neosOUas2soKh_OSNWriPRsWfc"
@@ -39,7 +77,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "287875927706-ut5514lnn65opqfbmldqcft1kv0ahbjp.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "287875927706-1fv7frro5a7ngerl38clktq9ke7tvk85.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.dentalUmg"
+              }
+            }
+          ]
         }
       }
     }

@@ -1,12 +1,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    
-    <!-- ✅ PERMISOS DE UBICACIÓN -->
+
+    <!-- ✅ Permisos de ubicación — REQUERIDOS para que geolocator funcione -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- ACCESS_BACKGROUND_LOCATION solo si necesitas ubicación con la app cerrada (opcional) -->
+    <!-- <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" /> -->
+
+    <!-- ✅ Internet — requerido para OpenStreetMap y Firebase -->
     <uses-permission android:name="android.permission.INTERNET" />
-    
+
     <application
-        android:label="dental_umg"
+        android:label="Salud Dental AI"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
@@ -31,20 +35,11 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
-    
+
     <queries>
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
-        </intent>
-        <!-- Para Google Maps y llamadas -->
-        <intent>
-            <action android:name="android.intent.action.VIEW" />
-            <data android:scheme="https" />
-        </intent>
-        <intent>
-            <action android:name="android.intent.action.DIAL" />
-            <data android:scheme="tel" />
         </intent>
     </queries>
 </manifest>
