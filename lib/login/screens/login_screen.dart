@@ -94,289 +94,314 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF0F0F8),
-      body: Column(
-        children: [
-          // ── Header flexible con logo ────────────────────────
-          Flexible(
-            flex: 4, // ocupa 4/11 de la pantalla
-            child: Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [kPrimaryDark, kPrimary, kPrimaryLight],
-                ),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(40),
-                  bottomRight: Radius.circular(40),
-                ),
-              ),
-              child: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withAlpha(60),
-                              blurRadius: 20,
-                              offset: const Offset(0, 8),
-                            ),
-                          ],
-                        ),
-                        child: ClipOval(
-                          child: Image.asset(
-                            'assets/images/logo_dental.png',
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => const Icon(
-                              Icons.health_and_safety,
-                              size: 44,
-                              color: kPrimary,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'Clínica Dental',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        'Para niños y adultos',
-                        style: TextStyle(
-                          color: Colors.white.withAlpha(200),
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+      // ✅ FIX: Permite que el Scaffold se redimensione cuando aparece el teclado
+      resizeToAvoidBottomInset: true,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          // ✅ FIX: El scroll evita el overflow cuando el teclado sube
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          child: ConstrainedBox(
+            // ✅ FIX: Garantiza que el contenido ocupe al menos toda la pantalla
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height -
+                  MediaQuery.of(context).padding.top -
+                  MediaQuery.of(context).padding.bottom,
             ),
-          ),
-
-          // ── Formulario flexible ─────────────────────────────
-          Flexible(
-            flex: 7, // ocupa 7/11 de la pantalla
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Bienvenido',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: kPrimaryDark,
+            child: IntrinsicHeight(
+              child: Column(
+                children: [
+                  // ── Header con logo ─────────────────────────────────
+                  Container(
+                    width: double.infinity,
+                    // ✅ FIX: Altura fija en lugar de Flexible para evitar
+                    // problemas de layout con el teclado
+                    height: 220,
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [kPrimaryDark, kPrimary, kPrimaryLight],
+                      ),
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(40),
+                        bottomRight: Radius.circular(40),
                       ),
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'Inicia sesión en tu cuenta',
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-
-                    // ── Campos ────────────────────────────────
-                    _buildTextField(
-                      controller: _emailController,
-                      label: 'Correo electrónico',
-                      icon: Icons.email_outlined,
-                      keyboardType: TextInputType.emailAddress,
-                      validator: (v) {
-                        if (v == null || v.isEmpty) {
-                          return 'Por favor ingresa tu email';
-                        }
-                        if (!v.contains('@')) return 'Email inválido';
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    _buildTextField(
-                      controller: _passwordController,
-                      label: 'Contraseña',
-                      icon: Icons.lock_outline,
-                      obscureText: true,
-                      validator: (v) {
-                        if (v == null || v.isEmpty) {
-                          return 'Por favor ingresa tu contraseña';
-                        }
-                        if (v.length < 6) return 'Mínimo 6 caracteres';
-                        return null;
-                      },
-                    ),
-
-                    // ── ¿Olvidaste tu contraseña? ─────────────
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: anyLoading
-                            ? null
-                            : () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) =>
-                                        const ForgotPasswordScreen(),
-                                  ),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withAlpha(60),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, 8),
                                 ),
-                        child: const Text(
-                          '¿Olvidaste tu contraseña?',
-                          style: TextStyle(color: kPrimary, fontSize: 13),
-                        ),
-                      ),
-                    ),
-
-                    // ── Botón Iniciar Sesión ───────────────────
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: anyLoading ? null : _login,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: kPrimary,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 3,
-                          shadowColor: kPrimary.withAlpha(100),
-                        ),
-                        child: _isLoading
-                            ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.white,
-                                ),
-                              )
-                            : const Text(
-                                'Iniciar Sesión',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // ── Separador ─────────────────────────────
-                    Row(children: [
-                      Expanded(child: Divider(color: Colors.grey[300])),
-                      Padding(
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 12),
-                        child: Text(
-                          'o continúa con',
-                          style: TextStyle(
-                              color: Colors.grey[500], fontSize: 13),
-                        ),
-                      ),
-                      Expanded(child: Divider(color: Colors.grey[300])),
-                    ]),
-                    const SizedBox(height: 16),
-
-                    // ── Botón Google ──────────────────────────
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton.icon(
-                        onPressed: anyLoading ? null : _loginWithGoogle,
-                        icon: _isGoogleLoading
-                            ? const SizedBox(
-                                width: 18,
-                                height: 18,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
+                              ],
+                            ),
+                            child: ClipOval(
+                              child: Image.asset(
+                                'assets/images/logo_dental.png',
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => const Icon(
+                                  Icons.health_and_safety,
+                                  size: 44,
                                   color: kPrimary,
                                 ),
-                              )
-                            : Image.network(
-                                'https://www.google.com/favicon.ico',
-                                width: 20,
-                                height: 20,
-                                errorBuilder: (_, __, ___) => const Icon(
-                                  Icons.g_mobiledata,
-                                  color: Colors.red,
-                                  size: 24,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          const Text(
+                            'Clínica Dental',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Para niños y adultos',
+                            style: TextStyle(
+                              color: Colors.white.withAlpha(200),
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // ── Formulario ──────────────────────────────────────
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24, vertical: 20),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Bienvenido',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: kPrimaryDark,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              'Inicia sesión en tu cuenta',
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+
+                            // ── Campos ────────────────────────────────
+                            _buildTextField(
+                              controller: _emailController,
+                              label: 'Correo electrónico',
+                              icon: Icons.email_outlined,
+                              keyboardType: TextInputType.emailAddress,
+                              validator: (v) {
+                                if (v == null || v.isEmpty) {
+                                  return 'Por favor ingresa tu email';
+                                }
+                                if (!v.contains('@')) return 'Email inválido';
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 12),
+                            _buildTextField(
+                              controller: _passwordController,
+                              label: 'Contraseña',
+                              icon: Icons.lock_outline,
+                              obscureText: true,
+                              validator: (v) {
+                                if (v == null || v.isEmpty) {
+                                  return 'Por favor ingresa tu contraseña';
+                                }
+                                if (v.length < 6) return 'Mínimo 6 caracteres';
+                                return null;
+                              },
+                            ),
+
+                            // ── ¿Olvidaste tu contraseña? ─────────────
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: TextButton(
+                                onPressed: anyLoading
+                                    ? null
+                                    : () => Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) =>
+                                                const ForgotPasswordScreen(),
+                                          ),
+                                        ),
+                                child: const Text(
+                                  '¿Olvidaste tu contraseña?',
+                                  style:
+                                      TextStyle(color: kPrimary, fontSize: 13),
                                 ),
                               ),
-                        label: const Text(
-                          'Continuar con Google',
-                          style: TextStyle(
-                              color: Colors.black87,
-                              fontWeight: FontWeight.w500),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 13),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          side: BorderSide(color: Colors.grey[300]!),
-                          backgroundColor: Colors.white,
+                            ),
+
+                            // ── Botón Iniciar Sesión ──────────────────
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: anyLoading ? null : _login,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: kPrimary,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 15),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  elevation: 3,
+                                  shadowColor: kPrimary.withAlpha(100),
+                                ),
+                                child: _isLoading
+                                    ? const SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    : const Text(
+                                        'Iniciar Sesión',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+
+                            // ── Separador ─────────────────────────────
+                            Row(children: [
+                              Expanded(
+                                  child: Divider(color: Colors.grey[300])),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 12),
+                                child: Text(
+                                  'o continúa con',
+                                  style: TextStyle(
+                                      color: Colors.grey[500], fontSize: 13),
+                                ),
+                              ),
+                              Expanded(
+                                  child: Divider(color: Colors.grey[300])),
+                            ]),
+                            const SizedBox(height: 16),
+
+                            // ── Botón Google ──────────────────────────
+                            SizedBox(
+                              width: double.infinity,
+                              child: OutlinedButton.icon(
+                                onPressed:
+                                    anyLoading ? null : _loginWithGoogle,
+                                icon: _isGoogleLoading
+                                    ? const SizedBox(
+                                        width: 18,
+                                        height: 18,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: kPrimary,
+                                        ),
+                                      )
+                                    : Image.network(
+                                        'https://www.google.com/favicon.ico',
+                                        width: 20,
+                                        height: 20,
+                                        errorBuilder: (_, __, ___) =>
+                                            const Icon(
+                                          Icons.g_mobiledata,
+                                          color: Colors.red,
+                                          size: 24,
+                                        ),
+                                      ),
+                                label: const Text(
+                                  'Continuar con Google',
+                                  style: TextStyle(
+                                      color: Colors.black87,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                style: OutlinedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 13),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  side:
+                                      BorderSide(color: Colors.grey[300]!),
+                                  backgroundColor: Colors.white,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+
+                            // ── ¿No tienes cuenta? ────────────────────
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  '¿No tienes cuenta? ',
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: anyLoading
+                                      ? null
+                                      : () => Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) =>
+                                                  const RegisterScreen(),
+                                            ),
+                                          ),
+                                  child: const Text(
+                                    'Regístrate aquí',
+                                    style: TextStyle(
+                                      color: kPrimary,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                          ],
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
-
-                    // ── ¿No tienes cuenta? ────────────────────
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          '¿No tienes cuenta? ',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 14,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: anyLoading
-                              ? null
-                              : () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => const RegisterScreen(),
-                                    ),
-                                  ),
-                          child: const Text(
-                            'Regístrate aquí',
-                            style: TextStyle(
-                              color: kPrimary,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }

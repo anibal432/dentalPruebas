@@ -23,29 +23,19 @@ class ClinicDetailScreen extends StatelessWidget {
     );
   }
 
-  // ── Abre una URL de forma segura ──────────────────────────────────────────
   Future<void> _launchSafe(BuildContext context, String url) async {
     try {
       final uri = Uri.parse(url);
-      final launched = await launchUrl(
-        uri,
-        mode: LaunchMode.externalApplication,
-      );
+      final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
       if (!launched && context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('No se pudo abrir: $url'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('No se pudo abrir: $url'), backgroundColor: Colors.red),
         );
       }
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error al abrir el enlace: $e'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('Error al abrir el enlace: $e'), backgroundColor: Colors.red),
         );
       }
     }
@@ -61,7 +51,6 @@ class ClinicDetailScreen extends StatelessWidget {
       }
       return;
     }
-    // Limpia el número: quita espacios y guiones
     final cleaned = phoneToCall.replaceAll(RegExp(r'[\s\-()]'), '');
     await _launchSafe(context, 'tel:$cleaned');
   }
@@ -94,33 +83,25 @@ class ClinicDetailScreen extends StatelessWidget {
     await _launchSafe(context, url);
   }
 
-  // ── Google Maps — usa el esquema nativo primero, fallback a web ───────────
   Future<void> _openInGoogleMaps(BuildContext context) async {
     final lat = clinic.latitude;
     final lng = clinic.longitude;
     final name = Uri.encodeComponent(clinic.name);
-
-    // Intento 1: app nativa de Google Maps
     final nativeUri = Uri.parse('geo:$lat,$lng?q=$lat,$lng($name)');
     bool opened = false;
     try {
       opened = await launchUrl(nativeUri, mode: LaunchMode.externalApplication);
     } catch (_) {}
-
-    // Intento 2: URL web de Google Maps
     if (!opened) {
-      final webUrl =
-          'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
+      final webUrl = 'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
       await _launchSafe(context, webUrl);
     }
   }
 
-  // ── OpenStreetMap web ─────────────────────────────────────────────────────
   Future<void> _openInOSM(BuildContext context) async {
     final lat = clinic.latitude;
     final lng = clinic.longitude;
-    final url =
-        'https://www.openstreetmap.org/?mlat=$lat&mlon=$lng&zoom=18#map=18/$lat/$lng';
+    final url = 'https://www.openstreetmap.org/?mlat=$lat&mlon=$lng&zoom=18#map=18/$lat/$lng';
     await _launchSafe(context, url);
   }
 
@@ -136,18 +117,15 @@ class ClinicDetailScreen extends StatelessWidget {
           children: [
             const SizedBox(height: 8),
             Container(
-              width: 40,
-              height: 4,
+              width: 40, height: 4,
               decoration: BoxDecoration(
                 color: Colors.grey.shade300,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
             const SizedBox(height: 12),
-            const Text(
-              'Abrir ubicación en…',
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
-            ),
+            const Text('Abrir ubicación en…',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
             const SizedBox(height: 8),
             ListTile(
               leading: Container(
@@ -156,14 +134,11 @@ class ClinicDetailScreen extends StatelessWidget {
                   color: Colors.blue.shade50,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(Icons.map, color: Colors.blue.shade700),
+                child: Icon(Icons.map, color: Color(0xFF2A2A6E)),
               ),
               title: const Text('Google Maps'),
               subtitle: const Text('Abre en la app o navegador'),
-              onTap: () {
-                Navigator.pop(ctx);
-                _openInGoogleMaps(context);
-              },
+              onTap: () { Navigator.pop(ctx); _openInGoogleMaps(context); },
             ),
             ListTile(
               leading: Container(
@@ -176,10 +151,7 @@ class ClinicDetailScreen extends StatelessWidget {
               ),
               title: const Text('OpenStreetMap'),
               subtitle: const Text('Abre en el navegador'),
-              onTap: () {
-                Navigator.pop(ctx);
-                _openInOSM(context);
-              },
+              onTap: () { Navigator.pop(ctx); _openInOSM(context); },
             ),
             const SizedBox(height: 16),
           ],
@@ -198,7 +170,7 @@ class ClinicDetailScreen extends StatelessWidget {
           SliverAppBar(
             expandedHeight: 200,
             pinned: true,
-            backgroundColor:const Color(0xFF3D3D8F),
+            backgroundColor: const Color(0xFF3D3D8F),
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
                 clinic.name,
@@ -221,19 +193,17 @@ class ClinicDetailScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Distancia
                   if (distance != null)
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [Colors.blue.shade400, Colors.blue.shade600],
+                          colors: [Color(0xFF2A2A6E), Color(0xFF2A2A6E)],
                         ),
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.blue.withAlpha(77),
+                            color: Color(0xFF2A2A6E),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -260,7 +230,6 @@ class ClinicDetailScreen extends StatelessWidget {
                   _buildSectionTitle('Información de Contacto'),
                   const SizedBox(height: 12),
 
-                  // Dirección — toca para abrir mapa
                   _buildInfoCard(
                     icon: Icons.location_on,
                     title: 'Dirección',
@@ -283,7 +252,7 @@ class ClinicDetailScreen extends StatelessWidget {
                       icon: Icons.email,
                       title: 'Email',
                       subtitle: clinic.email!,
-                      color: Colors.blue,
+                      color: Color(0xFF2A2A6E),
                       onTap: () => _launchEmail(context),
                     ),
 
@@ -298,9 +267,7 @@ class ClinicDetailScreen extends StatelessWidget {
 
                   const SizedBox(height: 24),
 
-                  // Horario
-                  if (clinic.openingHours != null &&
-                      clinic.openingHours!.isNotEmpty)
+                  if (clinic.openingHours != null && clinic.openingHours!.isNotEmpty)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -310,21 +277,20 @@ class ClinicDetailScreen extends StatelessWidget {
                           width: double.infinity,
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: Colors.teal.shade50,
+                            color: const Color(0xFFF0F0FA),
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.teal.shade200),
+                            border: Border.all(color: const Color(0xFF8888C8)),
                           ),
                           child: Row(
                             children: [
-                              Icon(Icons.access_time,
-                                  color: Colors.teal.shade700),
+                              const Icon(Icons.access_time, color: Color(0xFF2A2A6E)),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Text(
                                   clinic.openingHours!,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 15,
-                                    color: Colors.teal.shade800,
+                                    color: Color(0xFF2A2A6E),
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -336,7 +302,6 @@ class ClinicDetailScreen extends StatelessWidget {
                       ],
                     ),
 
-                  // Ciudad / Departamento
                   if (clinic.city != null || clinic.department != null)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -346,31 +311,18 @@ class ClinicDetailScreen extends StatelessWidget {
                         Row(
                           children: [
                             if (clinic.city != null)
-                              Expanded(
-                                child: _buildLocationChip(
-                                  icon: Icons.location_city,
-                                  label: clinic.city!,
-                                ),
-                              ),
-                            if (clinic.city != null &&
-                                clinic.department != null)
+                              Expanded(child: _buildLocationChip(icon: Icons.location_city, label: clinic.city!)),
+                            if (clinic.city != null && clinic.department != null)
                               const SizedBox(width: 8),
                             if (clinic.department != null)
-                              Expanded(
-                                child: _buildLocationChip(
-                                  icon: Icons.map,
-                                  label: clinic.department!,
-                                ),
-                              ),
+                              Expanded(child: _buildLocationChip(icon: Icons.map, label: clinic.department!)),
                           ],
                         ),
                         const SizedBox(height: 24),
                       ],
                     ),
 
-                  // Descripción
-                  if (clinic.description != null &&
-                      clinic.description!.isNotEmpty)
+                  if (clinic.description != null && clinic.description!.isNotEmpty)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -378,16 +330,12 @@ class ClinicDetailScreen extends StatelessWidget {
                         const SizedBox(height: 12),
                         Text(
                           clinic.description!,
-                          style: TextStyle(
-                              fontSize: 15,
-                              height: 1.6,
-                              color: Colors.grey.shade800),
+                          style: TextStyle(fontSize: 15, height: 1.6, color: Colors.grey.shade800),
                         ),
                         const SizedBox(height: 24),
                       ],
                     ),
 
-                  // Servicios
                   if (clinic.services.isNotEmpty)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -399,25 +347,21 @@ class ClinicDetailScreen extends StatelessWidget {
                           runSpacing: 8,
                           children: clinic.services.map((service) {
                             return Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 14, vertical: 8),
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                               decoration: BoxDecoration(
-                                color: Colors.teal.shade50,
+                                color: const Color(0xFFF0F0FA),
                                 borderRadius: BorderRadius.circular(20),
-                                border:
-                                    Border.all(color: Colors.teal.shade200),
+                                border: Border.all(color: const Color(0xFF8888C8)),
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(Icons.check_circle,
-                                      size: 16,
-                                      color: Colors.teal.shade700),
+                                  const Icon(Icons.check_circle, size: 16, color: Color(0xFF2A2A6E)),
                                   const SizedBox(width: 6),
                                   Text(
                                     service,
-                                    style: TextStyle(
-                                      color: Colors.teal.shade700,
+                                    style: const TextStyle(
+                                      color: Color(0xFF2A2A6E),
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -430,7 +374,6 @@ class ClinicDetailScreen extends StatelessWidget {
                       ],
                     ),
 
-                  // Fuente OSM
                   if (clinic.osmType != null)
                     Column(
                       children: [
@@ -443,16 +386,12 @@ class ClinicDetailScreen extends StatelessWidget {
                           ),
                           child: Row(
                             children: [
-                              Icon(Icons.info_outline,
-                                  color: Colors.blue.shade700, size: 20),
+                              Icon(Icons.info_outline, color: Color(0xFF2A2A6E), size: 20),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
                                   'Datos de OpenStreetMap',
-                                  style: TextStyle(
-                                    color: Colors.blue.shade700,
-                                    fontSize: 12,
-                                  ),
+                                  style: TextStyle(color: Color(0xFF2A2A6E), fontSize: 12),
                                 ),
                               ),
                             ],
@@ -462,7 +401,6 @@ class ClinicDetailScreen extends StatelessWidget {
                       ],
                     ),
 
-                  // Botones CTA
                   Row(
                     children: [
                       Expanded(
@@ -472,7 +410,7 @@ class ClinicDetailScreen extends StatelessWidget {
                           label: const Text('Cómo llegar'),
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
-                            backgroundColor: Colors.teal,
+                            backgroundColor: const Color(0xFF3D3D8F),
                             foregroundColor: Colors.white,
                             elevation: 2,
                           ),
@@ -487,8 +425,7 @@ class ClinicDetailScreen extends StatelessWidget {
                               icon: const Icon(Icons.phone),
                               label: const Text('Llamar'),
                               style: ElevatedButton.styleFrom(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.symmetric(vertical: 16),
                                 backgroundColor: Colors.green,
                                 foregroundColor: Colors.white,
                                 elevation: 2,
@@ -510,11 +447,11 @@ class ClinicDetailScreen extends StatelessWidget {
 
   Widget _buildDefaultImage() {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Colors.teal.shade300, Colors.teal.shade600],
+          colors: [Color(0xFF5C5CAF), Color(0xFF3D3D8F)],
         ),
       ),
       child: const Center(
@@ -526,11 +463,7 @@ class ClinicDetailScreen extends StatelessWidget {
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: const TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-        color: Colors.black87,
-      ),
+      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
     );
   }
 
@@ -546,8 +479,7 @@ class ClinicDetailScreen extends StatelessWidget {
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
@@ -558,33 +490,21 @@ class ClinicDetailScreen extends StatelessWidget {
         ),
         title: Text(
           title,
-          style: TextStyle(
-            fontSize: 13,
-            color: Colors.grey.shade600,
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(fontSize: 13, color: Colors.grey.shade600, fontWeight: FontWeight.w500),
         ),
         subtitle: Text(
           subtitle,
-          style: const TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
+          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.black87),
         ),
         trailing: onTap != null
-            ? Icon(Icons.arrow_forward_ios,
-                size: 16, color: Colors.grey.shade400)
+            ? Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey.shade400)
             : null,
         onTap: onTap,
       ),
     );
   }
 
-  Widget _buildLocationChip({
-    required IconData icon,
-    required String label,
-  }) {
+  Widget _buildLocationChip({required IconData icon, required String label}) {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -600,11 +520,7 @@ class ClinicDetailScreen extends StatelessWidget {
           Flexible(
             child: Text(
               label,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Colors.grey.shade700,
-              ),
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey.shade700),
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
             ),

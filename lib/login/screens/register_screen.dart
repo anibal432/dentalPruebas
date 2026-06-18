@@ -5,6 +5,12 @@ import '../widgets/custom_textfield.dart';
 import 'login_screen.dart';
 import '../../screens/home_screen.dart';
 
+// ── Paleta institucional ───────────────────────────────────
+const Color _kPrimary    = Color(0xFF3D3D8F); // Principal
+const Color _kPrimaryDark = Color(0xFF2B2B6B); // AppBar / sombra
+const Color _kPrimaryLight = Color(0xFF6E6EC8); // Acento / indicadores
+const Color _kSurface    = Color(0xFFE8E8F5); // Fondo general
+
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -43,7 +49,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(_mensajeError(e.toString())),
-            backgroundColor: Colors.red,
+            backgroundColor: Colors.red[700],
           ),
         );
       }
@@ -68,7 +74,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error con Google: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: Colors.red[700],
           ),
         );
       }
@@ -97,10 +103,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final bool anyLoading = _isLoading || _isGoogleLoading;
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: _kSurface, // ← antes Colors.grey[100]
       appBar: AppBar(
         title: const Text('Crear Cuenta'),
-        backgroundColor: Colors.teal,
+        backgroundColor: _kPrimaryDark, // ← antes Colors.teal
         foregroundColor: Colors.white,
       ),
       body: SafeArea(
@@ -120,7 +126,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       .headlineMedium
                       ?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Colors.teal,
+                        color: _kPrimary, // ← antes Colors.teal
                       ),
                 ),
                 const SizedBox(height: 8),
@@ -183,8 +189,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   child: ElevatedButton(
                     onPressed: anyLoading ? null : _register,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.teal,
+                      backgroundColor: _kPrimary,     // ← antes Colors.teal
                       foregroundColor: Colors.white,
+                      disabledBackgroundColor: _kPrimary.withOpacity(0.5),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -232,7 +239,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             height: 18,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: Colors.teal,
+                              color: _kPrimaryLight, // ← antes Colors.teal
                             ),
                           )
                         : Image.network(
@@ -247,15 +254,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                     label: const Text('Registrarse con Google'),
                     style: OutlinedButton.styleFrom(
+                      foregroundColor: _kPrimary, // ← texto del botón
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      side: BorderSide(color: Colors.grey[300]!),
+                      side: const BorderSide(color: _kPrimary), // ← antes gris
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
 
                 // ── Ir a login ────────────────────────────────
                 SizedBox(
@@ -270,9 +278,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                             ),
                     style: OutlinedButton.styleFrom(
+                      foregroundColor: _kPrimary, // ← texto del botón
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
+                      ),
+                      side: BorderSide(
+                        color: _kPrimary.withOpacity(0.4),
                       ),
                     ),
                     child: const Text('¿Ya tienes cuenta? Inicia Sesión'),

@@ -2,47 +2,59 @@
 import 'package:flutter/material.dart';
 import '../models/dental_dictionary_entry.dart';
 
-// ─── Helpers locales (sin dependencia de otras pantallas) ───
+// ── Paleta institucional unificada ────────────────────────────
+const Color _kPrimaryDark  = Color(0xFF2A2A6E);
+const Color _kPrimary      = Color(0xFF3D3D8F);
+const Color _kPrimaryLight = Color(0xFF5C5CAF);
+const Color _kAccent       = Color(0xFF8888C8);
+const Color _kLightFill    = Color(0xFFD0D0F0);
+const Color _kSurface      = Color(0xFFF0F0FA);
 
 Color _categoryColor(String category) {
   switch (category.toLowerCase()) {
     case 'enfermedades comunes':
-      return Colors.red;
+      return _kPrimary;
     case 'procedimientos':
-      return Colors.blue;
+      return _kPrimaryDark;
     case 'anatomía':
-      return Colors.green;
+    case 'anatomía dental':
+      return _kPrimaryLight;
     case 'ortodoncia':
-      return Colors.orange;
+      return _kAccent;
     case 'higiene':
-      return Colors.purple;
+      return _kPrimary;
     case 'materiales':
-      return Colors.brown;
+      return _kPrimaryDark;
+    case 'tratamientos dentales':
+    case 'tratamientos':
+      return _kPrimaryLight;
     default:
-      return Colors.teal;
+      return _kPrimary;
   }
 }
 
 IconData _categoryIcon(String category) {
   switch (category.toLowerCase()) {
     case 'enfermedades comunes':
-      return Icons.sick;
+      return Icons.sick_outlined;
     case 'procedimientos':
-      return Icons.medical_services;
+      return Icons.medical_services_outlined;
     case 'anatomía':
-      return Icons.biotech;
+    case 'anatomía dental':
+      return Icons.biotech_outlined;
     case 'ortodoncia':
       return Icons.straighten;
     case 'higiene':
-      return Icons.cleaning_services;
+      return Icons.clean_hands_outlined;
     case 'materiales':
-      return Icons.science;
+      return Icons.science_outlined;
+    case 'tratamientos dentales':
+    case 'tratamientos':
+      return Icons.healing_outlined;
     default:
-      return Icons.menu_book;
+      return Icons.menu_book_outlined;
   }
 }
-
-// ───────────────────────────────────────────────────────────
 
 class DentalDictionaryDetailScreen extends StatelessWidget {
   final DentalDictionaryEntry entry;
@@ -52,7 +64,7 @@ class DentalDictionaryDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = _categoryColor(entry.category);
-    final icon = _categoryIcon(entry.category);
+    final icon  = _categoryIcon(entry.category);
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
@@ -62,15 +74,17 @@ class DentalDictionaryDetailScreen extends StatelessWidget {
           SliverAppBar(
             expandedHeight: 200,
             pinned: true,
-            backgroundColor: color,
+            // ✅ Color institucional en lugar de turquesa
+            backgroundColor: _kPrimaryDark,
             foregroundColor: Colors.white,
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
+                  // ✅ Gradiente institucional azul/morado
                   gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [color, color.withAlpha(204)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [_kPrimaryDark, _kPrimary, _kPrimaryLight],
                   ),
                 ),
                 child: SafeArea(
@@ -78,12 +92,17 @@ class DentalDictionaryDetailScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const SizedBox(height: 32),
+                      // ── Avatar con inicial ──────────────────
                       Container(
                         width: 80,
                         height: 80,
                         decoration: BoxDecoration(
-                          color: Colors.white.withAlpha(51),
+                          color: Colors.white.withAlpha(40),
                           shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.white.withAlpha(80),
+                            width: 1.5,
+                          ),
                         ),
                         child: Center(
                           child: Text(
@@ -99,12 +118,16 @@ class DentalDictionaryDetailScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 12),
+                      // ── Badge de categoría ──────────────────
                       Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 14, vertical: 5),
                         decoration: BoxDecoration(
-                          color: Colors.white.withAlpha(51),
+                          color: Colors.white.withAlpha(40),
                           borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: Colors.white.withAlpha(60),
+                          ),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -136,18 +159,21 @@ class DentalDictionaryDetailScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // ── Título ────────────────────────────────
                   Text(
                     entry.title,
                     style: const TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
                       height: 1.2,
+                      color: Color(0xFF1A1A3E),
                     ),
                   ),
-                  // ── Fecha eliminada de la UI (sigue guardándose en Firestore) ──
                   const SizedBox(height: 24),
-                  const Divider(),
+                  const Divider(color: _kLightFill),
                   const SizedBox(height: 20),
+
+                  // ── Encabezado "Definición" ───────────────
                   Row(
                     children: [
                       Container(
@@ -162,24 +188,23 @@ class DentalDictionaryDetailScreen extends StatelessWidget {
                       const Text(
                         'Definición',
                         style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF1A1A3E),
+                        ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 14),
+
+                  // ── Cuerpo de la definición ───────────────
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(14),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withAlpha(25),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
+                      border: Border.all(color: _kLightFill),
                     ),
                     child: Text(
                       entry.description,
@@ -191,23 +216,27 @@ class DentalDictionaryDetailScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 24),
+
+                  // ── Nota informativa ──────────────────────
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: color.withAlpha(20),
+                      color: _kSurface,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: color.withAlpha(76), width: 1),
+                      border: Border.all(color: _kLightFill),
                     ),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(Icons.info_outline, color: color, size: 20),
+                        const Icon(Icons.info_outline,
+                            color: _kPrimaryLight, size: 20),
                         const SizedBox(width: 12),
-                        Expanded(
+                        const Expanded(
                           child: Text(
-                            'Este término es de carácter informativo, consulta siempre con un profesional dental.',
+                            'Este término es de carácter informativo, '
+                            'consulta siempre con un profesional dental.',
                             style: TextStyle(
-                              color: color.withAlpha(204),
+                              color: _kPrimaryLight,
                               fontSize: 13,
                               height: 1.5,
                             ),
