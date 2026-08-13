@@ -5,11 +5,13 @@ import '../widgets/custom_textfield.dart';
 import 'login_screen.dart';
 import '../../screens/home_screen.dart';
 
-// ── Paleta institucional ───────────────────────────────────
-const Color _kPrimary    = Color(0xFF3D3D8F); // Principal
-const Color _kPrimaryDark = Color(0xFF2B2B6B); // AppBar / sombra
-const Color _kPrimaryLight = Color(0xFF6E6EC8); // Acento / indicadores
-const Color _kSurface    = Color(0xFFE8E8F5); // Fondo general
+// ── Paleta institucional ──────────────────────────────────────
+const Color _kPrimaryDark  = Color(0xFF2A2A6E);
+const Color _kPrimary      = Color(0xFF3D3D8F);
+const Color _kPrimaryLight = Color(0xFF5C5CAF);
+const Color _kLightFill    = Color(0xFFD0D0F0);
+const Color _kSurface      = Color(0xFFF0F0FA);
+
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});

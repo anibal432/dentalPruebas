@@ -134,7 +134,7 @@ class ClinicDetailScreen extends StatelessWidget {
                   color: Colors.blue.shade50,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(Icons.map, color: Color(0xFF2A2A6E)),
+                child: Icon(Icons.map, color: Color(0xFF3B2F8C)),
               ),
               title: const Text('Google Maps'),
               subtitle: const Text('Abre en la app o navegador'),
@@ -170,7 +170,7 @@ class ClinicDetailScreen extends StatelessWidget {
           SliverAppBar(
             expandedHeight: 200,
             pinned: true,
-            backgroundColor: const Color(0xFF3D3D8F),
+            backgroundColor: const Color(0xFF5B4FCF),
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
                 clinic.name,
@@ -198,12 +198,12 @@ class ClinicDetailScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [Color(0xFF2A2A6E), Color(0xFF2A2A6E)],
+                          colors: [Color(0xFF3B2F8C), Color(0xFF3B2F8C)],
                         ),
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: Color(0xFF2A2A6E),
+                            color: Color(0xFF3B2F8C),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -252,7 +252,7 @@ class ClinicDetailScreen extends StatelessWidget {
                       icon: Icons.email,
                       title: 'Email',
                       subtitle: clinic.email!,
-                      color: Color(0xFF2A2A6E),
+                      color: Color(0xFF3B2F8C),
                       onTap: () => _launchEmail(context),
                     ),
 
@@ -277,20 +277,20 @@ class ClinicDetailScreen extends StatelessWidget {
                           width: double.infinity,
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF0F0FA),
+                            color: const Color(0xFFF3F1FC),
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: const Color(0xFF8888C8)),
+                            border: Border.all(color: const Color(0xFF7C6FE0)),
                           ),
                           child: Row(
                             children: [
-                              const Icon(Icons.access_time, color: Color(0xFF2A2A6E)),
+                              const Icon(Icons.access_time, color: Color(0xFF3B2F8C)),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Text(
                                   clinic.openingHours!,
                                   style: const TextStyle(
                                     fontSize: 15,
-                                    color: Color(0xFF2A2A6E),
+                                    color: Color(0xFF3B2F8C),
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -349,19 +349,19 @@ class ClinicDetailScreen extends StatelessWidget {
                             return Container(
                               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFF0F0FA),
+                                color: const Color(0xFFF3F1FC),
                                 borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: const Color(0xFF8888C8)),
+                                border: Border.all(color: const Color(0xFF7C6FE0)),
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Icon(Icons.check_circle, size: 16, color: Color(0xFF2A2A6E)),
+                                  const Icon(Icons.check_circle, size: 16, color: Color(0xFF3B2F8C)),
                                   const SizedBox(width: 6),
                                   Text(
                                     service,
                                     style: const TextStyle(
-                                      color: Color(0xFF2A2A6E),
+                                      color: Color(0xFF3B2F8C),
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -386,12 +386,12 @@ class ClinicDetailScreen extends StatelessWidget {
                           ),
                           child: Row(
                             children: [
-                              Icon(Icons.info_outline, color: Color(0xFF2A2A6E), size: 20),
+                              Icon(Icons.info_outline, color: Color(0xFF3B2F8C), size: 20),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
                                   'Datos de OpenStreetMap',
-                                  style: TextStyle(color: Color(0xFF2A2A6E), fontSize: 12),
+                                  style: TextStyle(color: Color(0xFF3B2F8C), fontSize: 12),
                                 ),
                               ),
                             ],
@@ -410,7 +410,7 @@ class ClinicDetailScreen extends StatelessWidget {
                           label: const Text('Cómo llegar'),
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
-                            backgroundColor: const Color(0xFF3D3D8F),
+                            backgroundColor: const Color(0xFF5B4FCF),
                             foregroundColor: Colors.white,
                             elevation: 2,
                           ),
@@ -451,7 +451,7 @@ class ClinicDetailScreen extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF5C5CAF), Color(0xFF3D3D8F)],
+          colors: [Color(0xFF8C7FE8), Color(0xFF5B4FCF)],
         ),
       ),
       child: const Center(

@@ -13,7 +13,7 @@ class AffiliatedClinic {
 }
 
 const List<AffiliatedClinic> _affiliatedList = [
-  AffiliatedClinic(firestoreId: 'REEMPLAZA_CON_DOC_ID', badgeLabel: 'Recomendada', speciality: 'Odontología General · Ortodoncia · Implantes'),
+  AffiliatedClinic(firestoreId: 'local-coatepeque-002', badgeLabel: 'Recomendada', speciality: 'Odontología General · Odontopediatría'),
 ];
 
 class _ScoredClinic {
@@ -35,10 +35,17 @@ List<_ScoredClinic> _scoreAndSort(List<DentalClinic> clinics, {String? detectedC
     final dist = clinic.distanceInKm ?? 10.0;
     final distScore = ((10.0 - dist.clamp(0, 10)) * 2).clamp(0.0, 20.0);
     final ratingScore = ((clinic.rating ?? 3.5) * 4).clamp(0.0, 20.0);
+    // El boost de Firestore (clínicas registradas a mano) y el boost de
+    // afiliados (lista fija arriba, puede venir del JSON local) compiten
+    // por el primer lugar; ambos pesan igual para que cualquiera de los
+    // dos mecanismos pueda destacar una clínica como "recomendada".
     final firestoreBoost = isFS ? 999.0 : 0.0;
-    final total = distScore + ratingScore + firestoreBoost;
+    final affiliatedBoost = aff != null ? 999.0 : 0.0;
+    final total = distScore + ratingScore + firestoreBoost + affiliatedBoost;
     String reason;
-    if (isFS && detectedCondition != null) {
+    if (aff != null) {
+      reason = '✅ Clínica recomendada · ${aff.speciality}';
+    } else if (isFS && detectedCondition != null) {
       reason = '🦷 Puede tratar $detectedCondition · Clínica verificada';
     } else if (isFS) {
       reason = '✅ Clínica verificada · Atención integral disponible';
@@ -98,7 +105,7 @@ class _SmartClinicScreenState extends State<SmartClinicScreen> with SingleTicker
     try {
       final raw = await _locationService.findNearbyDentalClinics(latitude: _position!.latitude, longitude: _position!.longitude, radiusKm: _radiusKm);
       if (!mounted) return;
-      final firestoreIds = raw.where((c) => !RegExp(r'^\d+$').hasMatch(c.id)).map((c) => c.id).toSet();
+      final firestoreIds = raw.where((c) => !RegExp(r'^\d+$').hasMatch(c.id) && !c.id.startsWith('local-')).map((c) => c.id).toSet();
       final scored = _scoreAndSort(raw, detectedCondition: widget.detectedCondition, firestoreIds: firestoreIds);
       setState(() {
         _scored = scored;
@@ -115,7 +122,7 @@ class _SmartClinicScreenState extends State<SmartClinicScreen> with SingleTicker
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF0F4F8),
+      backgroundColor: const Color(0xFFF3F1FC),
       appBar: _buildAppBar(),
       body: _loading ? _buildLoader() : _scored.isEmpty ? _buildEmpty() : FadeTransition(opacity: _fadeAnim, child: _buildContent()),
       floatingActionButton: !_loading && _scored.isNotEmpty ? _buildFAB() : null,
@@ -124,7 +131,7 @@ class _SmartClinicScreenState extends State<SmartClinicScreen> with SingleTicker
 
   AppBar _buildAppBar() {
     return AppBar(
-      backgroundColor: const Color(0xFF2A2A6E),
+      backgroundColor: const Color(0xFF3B2F8C),
       foregroundColor: Colors.white,
       elevation: 0,
       title: Column(
@@ -147,9 +154,9 @@ class _SmartClinicScreenState extends State<SmartClinicScreen> with SingleTicker
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(color: Color(0xFF3D3D8F), strokeWidth: 3),
+          CircularProgressIndicator(color: Color(0xFF5B4FCF), strokeWidth: 3),
           SizedBox(height: 16),
-          Text('Buscando clínicas…', style: TextStyle(color: Color(0xFF3D3D8F), fontWeight: FontWeight.w600)),
+          Text('Buscando clínicas…', style: TextStyle(color: Color(0xFF5B4FCF), fontWeight: FontWeight.w600)),
           SizedBox(height: 4),
           Text('Calculando recomendaciones', style: TextStyle(color: Colors.grey, fontSize: 12)),
         ],
@@ -173,7 +180,7 @@ class _SmartClinicScreenState extends State<SmartClinicScreen> with SingleTicker
               icon: const Icon(Icons.zoom_out_map_rounded),
               label: Text('Ampliar a ${(_radiusKm + 10).clamp(0, 50).toInt()} km'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF3D3D8F),
+                backgroundColor: const Color(0xFF5B4FCF),
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
@@ -193,7 +200,7 @@ class _SmartClinicScreenState extends State<SmartClinicScreen> with SingleTicker
       children: [
         if (widget.detectedCondition != null) _buildAIBanner(),
         if (!_isRealGPS) _buildGPSWarning(),
-        _buildSectionHeader('⭐ Recomendado para ti', const Color(0xFF2A2A6E)),
+        _buildSectionHeader('⭐ Recomendado para ti', const Color(0xFF3B2F8C)),
         const SizedBox(height: 8),
         _buildTopCard(top),
         if (rest.isNotEmpty) ...[
@@ -212,12 +219,12 @@ class _SmartClinicScreenState extends State<SmartClinicScreen> with SingleTicker
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFF2A2A6E), Color(0xFF5C5CAF)],
+          colors: [Color(0xFF3B2F8C), Color(0xFF8C7FE8)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(14),
-        boxShadow: [BoxShadow(color: const Color(0xFF3D3D8F).withAlpha(80), blurRadius: 12, offset: const Offset(0, 4))],
+        boxShadow: [BoxShadow(color: const Color(0xFF5B4FCF).withAlpha(80), blurRadius: 12, offset: const Offset(0, 4))],
       ),
       child: Row(
         children: [
@@ -281,8 +288,8 @@ class _SmartClinicScreenState extends State<SmartClinicScreen> with SingleTicker
   Widget _buildTopCard(_ScoredClinic sc) {
     final clinic = sc.clinic;
     final isFS = sc.isFirestore;
-    const badgeColorFS = Color(0xFF2A2A6E);
-    final badgeColor = isFS ? badgeColorFS : Color(0xFF2A2A6E);
+    const badgeColorFS = Color(0xFF3B2F8C);
+    final badgeColor = isFS ? badgeColorFS : Color(0xFF3B2F8C);
 
     return GestureDetector(
       onTap: () => _openDetail(clinic),
@@ -290,8 +297,8 @@ class _SmartClinicScreenState extends State<SmartClinicScreen> with SingleTicker
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: isFS ? const Color(0xFF5C5CAF) : const Color(0xFFD0D0F0), width: isFS ? 2 : 1),
-          boxShadow: [BoxShadow(color: const Color(0xFF3D3D8F).withAlpha(isFS ? 60 : 20), blurRadius: isFS ? 24 : 8, offset: const Offset(0, 4))],
+          border: Border.all(color: isFS ? const Color(0xFF8C7FE8) : const Color(0xFFE0DBF7), width: isFS ? 2 : 1),
+          boxShadow: [BoxShadow(color: const Color(0xFF5B4FCF).withAlpha(isFS ? 60 : 20), blurRadius: isFS ? 24 : 8, offset: const Offset(0, 4))],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -300,7 +307,7 @@ class _SmartClinicScreenState extends State<SmartClinicScreen> with SingleTicker
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: isFS ? [const Color(0xFFD0D0F0), const Color(0xFF8888C8)] : [Colors.blue.shade50, Colors.blue.shade100],
+                  colors: isFS ? [const Color(0xFFE0DBF7), const Color(0xFF7C6FE0)] : [Colors.blue.shade50, Colors.blue.shade100],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -379,11 +386,11 @@ class _SmartClinicScreenState extends State<SmartClinicScreen> with SingleTicker
                   const SizedBox(height: 12),
                   _buildInfoRow(Icons.location_on_rounded, clinic.address, Colors.grey.shade500),
                   if (clinic.openingHours != null && clinic.openingHours!.isNotEmpty)
-                    _buildInfoRow(Icons.access_time_rounded, clinic.openingHours!, const Color(0xFF5C5CAF), textColor: const Color(0xFF2A2A6E)),
+                    _buildInfoRow(Icons.access_time_rounded, clinic.openingHours!, const Color(0xFF8C7FE8), textColor: const Color(0xFF3B2F8C)),
                   if (clinic.phone != null && clinic.phone!.isNotEmpty)
                     _buildInfoRow(Icons.phone_rounded, clinic.phone!, Colors.green.shade400, textColor: Colors.green.shade700),
                   if (sc.affiliated != null)
-                    _buildInfoRow(Icons.medical_services_rounded, sc.affiliated!.speciality, const Color(0xFF5C5CAF), textColor: const Color(0xFF2A2A6E)),
+                    _buildInfoRow(Icons.medical_services_rounded, sc.affiliated!.speciality, const Color(0xFF8C7FE8), textColor: const Color(0xFF3B2F8C)),
                   if (clinic.services.isNotEmpty) ...[
                     const SizedBox(height: 10),
                     Wrap(
@@ -391,11 +398,11 @@ class _SmartClinicScreenState extends State<SmartClinicScreen> with SingleTicker
                       children: clinic.services.take(4).map((s) => Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF0F0FA),
+                          color: const Color(0xFFF3F1FC),
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: const Color(0xFFD0D0F0)),
+                          border: Border.all(color: const Color(0xFFE0DBF7)),
                         ),
-                        child: Text(s, style: const TextStyle(color: Color(0xFF2A2A6E), fontSize: 11)),
+                        child: Text(s, style: const TextStyle(color: Color(0xFF3B2F8C), fontSize: 11)),
                       )).toList(),
                     ),
                   ],
@@ -457,10 +464,10 @@ class _SmartClinicScreenState extends State<SmartClinicScreen> with SingleTicker
                 Container(
                   width: 32, height: 32,
                   decoration: BoxDecoration(
-                    color: isFS ? const Color(0xFFD0D0F0) : Colors.grey.shade100,
+                    color: isFS ? const Color(0xFFE0DBF7) : Colors.grey.shade100,
                     shape: BoxShape.circle,
                   ),
-                  child: Center(child: Text('${index + 2}', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: isFS ? const Color(0xFF2A2A6E) : Colors.grey.shade600))),
+                  child: Center(child: Text('${index + 2}', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: isFS ? const Color(0xFF3B2F8C) : Colors.grey.shade600))),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -475,11 +482,11 @@ class _SmartClinicScreenState extends State<SmartClinicScreen> with SingleTicker
                               margin: const EdgeInsets.only(left: 6),
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFD0D0F0),
+                                color: const Color(0xFFE0DBF7),
                                 borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: const Color(0xFF8888C8)),
+                                border: Border.all(color: const Color(0xFF7C6FE0)),
                               ),
-                              child: const Text('Verificada', style: TextStyle(color: Color(0xFF2A2A6E), fontSize: 10, fontWeight: FontWeight.w600)),
+                              child: const Text('Verificada', style: TextStyle(color: Color(0xFF3B2F8C), fontSize: 10, fontWeight: FontWeight.w600)),
                             ),
                         ],
                       ),
@@ -488,9 +495,9 @@ class _SmartClinicScreenState extends State<SmartClinicScreen> with SingleTicker
                       if (clinic.openingHours != null) ...[
                         const SizedBox(height: 2),
                         Row(children: [
-                          const Icon(Icons.access_time_rounded, size: 11, color: Color(0xFF8888C8)),
+                          const Icon(Icons.access_time_rounded, size: 11, color: Color(0xFF7C6FE0)),
                           const SizedBox(width: 3),
-                          Expanded(child: Text(clinic.openingHours!, style: const TextStyle(color: Color(0xFF5C5CAF), fontSize: 10), maxLines: 1, overflow: TextOverflow.ellipsis)),
+                          Expanded(child: Text(clinic.openingHours!, style: const TextStyle(color: Color(0xFF8C7FE8), fontSize: 10), maxLines: 1, overflow: TextOverflow.ellipsis)),
                         ]),
                       ],
                       const SizedBox(height: 3),
@@ -508,7 +515,7 @@ class _SmartClinicScreenState extends State<SmartClinicScreen> with SingleTicker
                   children: [
                     Text(
                       '${clinic.distanceInKm?.toStringAsFixed(1) ?? '?'} km',
-                      style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: isFS ? const Color(0xFF3D3D8F) : Colors.grey.shade700),
+                      style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: isFS ? const Color(0xFF5B4FCF) : Colors.grey.shade700),
                     ),
                     const Icon(Icons.chevron_right_rounded, color: Colors.grey, size: 18),
                   ],
@@ -524,7 +531,7 @@ class _SmartClinicScreenState extends State<SmartClinicScreen> with SingleTicker
   Widget _buildFAB() {
     return FloatingActionButton.extended(
       onPressed: _loadClinics,
-      backgroundColor: const Color(0xFF2A2A6E),
+      backgroundColor: const Color(0xFF3B2F8C),
       foregroundColor: Colors.white,
       icon: const Icon(Icons.my_location_rounded),
       label: Text('${_scored.length} clínicas · ${_radiusKm.toInt()} km'),
@@ -569,10 +576,10 @@ class _RadiusPickerState extends State<_RadiusPicker> {
           const SizedBox(height: 20),
           const Text('Radio de búsqueda', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
           const SizedBox(height: 24),
-          Text('${_r.toInt()} km', style: const TextStyle(fontSize: 40, fontWeight: FontWeight.w800, color: Color(0xFF2A2A6E))),
+          Text('${_r.toInt()} km', style: const TextStyle(fontSize: 40, fontWeight: FontWeight.w800, color: Color(0xFF3B2F8C))),
           Slider(
             value: _r, min: 5, max: 50, divisions: 9,
-            activeColor: const Color(0xFF3D3D8F),
+            activeColor: const Color(0xFF5B4FCF),
             label: '${_r.toInt()} km',
             onChanged: (v) => setState(() => _r = v),
           ),
@@ -598,7 +605,7 @@ class _RadiusPickerState extends State<_RadiusPicker> {
                 child: ElevatedButton(
                   onPressed: () { widget.onChanged(_r); Navigator.pop(context); },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF3D3D8F),
+                    backgroundColor: const Color(0xFF5B4FCF),
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

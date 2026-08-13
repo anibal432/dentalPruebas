@@ -10,6 +10,7 @@ import '../location/screens/smart_clinic_screen.dart';
 const Color _kPrimary = Color(0xFF3D3D8F);
 const Color _kPrimaryDark = Color(0xFF2A2A6E);
 
+ 
 class DentalScanScreen extends StatefulWidget {
   const DentalScanScreen({super.key});
 
@@ -558,14 +559,14 @@ class _DentalScanScreenState extends State<DentalScanScreen>
       padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 24),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFF2A2A6E), Color(0xFF2A2A6E)],
+          colors: [Color(0xFF0B2A42), Color(0xFF0B2A42)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Color(0xFF2A2A6E),
+            color: Color(0xFF0B2A42),
             blurRadius: 16,
             offset: const Offset(0, 6),
           ),
@@ -995,7 +996,7 @@ class _DentalScanScreenState extends State<DentalScanScreen>
                         Icon(
                           _modelLoaded ? Icons.check_circle : Icons.sync,
                           color: _modelLoaded
-                              ? Color(0xFF2A2A6E)
+                              ? Color(0xFF0B2A42)
                               : Colors.orangeAccent,
                           size: 14,
                         ),

@@ -9,6 +9,7 @@ const Color _kPrimaryLight = Color(0xFF5C5CAF);
 const Color _kLightFill    = Color(0xFFD0D0F0);
 const Color _kSurface      = Color(0xFFF0F0FA);
 
+  
 class TipDetailScreen extends StatelessWidget {
   final DentalTip tip;
 

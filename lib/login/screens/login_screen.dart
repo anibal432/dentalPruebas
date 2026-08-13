@@ -120,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
-                        colors: [kPrimaryDark, kPrimary, kPrimaryLight],
+                        colors: [kPrimaryDark, kPrimary],
                       ),
                       borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(40),
@@ -132,28 +132,25 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          // 🎨 CAMBIO VISUAL: círculo semi-transparente en vez
+                          // de círculo blanco sólido, y BoxFit.contain en vez
+                          // de cover para que el ícono no se recorte
                           Container(
-                            width: 80,
-                            height: 80,
+                            width: 110,
+                            height: 110,
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: Colors.white.withAlpha(35),
                               shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withAlpha(60),
-                                  blurRadius: 20,
-                                  offset: const Offset(0, 8),
-                                ),
-                              ],
                             ),
-                            child: ClipOval(
+                            child: Padding(
+                              padding: const EdgeInsets.all(20),
                               child: Image.asset(
                                 'assets/images/logo_dental.png',
-                                fit: BoxFit.cover,
+                                fit: BoxFit.contain,
                                 errorBuilder: (_, __, ___) => const Icon(
                                   Icons.health_and_safety,
-                                  size: 44,
-                                  color: kPrimary,
+                                  size: 50,
+                                  color: Colors.white,
                                 ),
                               ),
                             ),

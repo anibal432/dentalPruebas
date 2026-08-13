@@ -90,7 +90,7 @@ class _ClinicMapScreenState extends State<ClinicMapScreen> {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF3D3D8F),
+              backgroundColor: const Color(0xFF5B4FCF),
               foregroundColor: Colors.white,
             ),
             onPressed: () {
@@ -168,7 +168,7 @@ class _ClinicMapScreenState extends State<ClinicMapScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mapa de Clínicas'),
-        backgroundColor: const Color(0xFF3D3D8F),
+        backgroundColor: const Color(0xFF5B4FCF),
         foregroundColor: Colors.white,
         actions: [
           IconButton(
@@ -188,7 +188,7 @@ class _ClinicMapScreenState extends State<ClinicMapScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircularProgressIndicator(color: Color(0xFF3D3D8F)),
+                  CircularProgressIndicator(color: Color(0xFF5B4FCF)),
                   SizedBox(height: 16),
                   Text('Buscando clínicas cercanas...'),
                   SizedBox(height: 8),
@@ -216,13 +216,13 @@ class _ClinicMapScreenState extends State<ClinicMapScreen> {
                   heroTag: 'refresh',
                   onPressed: _loadNearbyClinics,
                   backgroundColor: Colors.white,
-                  child: const Icon(Icons.refresh, color: Color(0xFF3D3D8F)),
+                  child: const Icon(Icons.refresh, color: Color(0xFF5B4FCF)),
                 ),
                 const SizedBox(height: 8),
                 FloatingActionButton(
                   heroTag: 'location',
                   onPressed: _centerOnUser,
-                  backgroundColor: const Color(0xFF3D3D8F),
+                  backgroundColor: const Color(0xFF5B4FCF),
                   child: const Icon(Icons.my_location),
                 ),
               ],
@@ -257,8 +257,8 @@ class _ClinicMapScreenState extends State<ClinicMapScreen> {
               ),
               radius: _radiusKm * 1000,
               useRadiusInMeter: true,
-              color: const Color(0xFF3D3D8F).withAlpha(25),
-              borderColor: const Color(0xFF3D3D8F).withAlpha(77),
+              color: const Color(0xFF5B4FCF).withAlpha(25),
+              borderColor: const Color(0xFF5B4FCF).withAlpha(77),
               borderStrokeWidth: 2,
             ),
           ],
@@ -275,7 +275,7 @@ class _ClinicMapScreenState extends State<ClinicMapScreen> {
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: _isRealLocation ? const Color(0xFF3D3D8F) : Colors.orange,
+                  color: _isRealLocation ? const Color(0xFF5B4FCF) : Colors.orange,
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.white, width: 3),
                   boxShadow: [
@@ -407,9 +407,9 @@ class _ClinicMapScreenState extends State<ClinicMapScreen> {
                     Chip(
                       label: Text('${_radiusKm.toInt()} km'),
                       avatar: const Icon(Icons.location_on, size: 16),
-                      backgroundColor: const Color(0xFFF0F0FA),
+                      backgroundColor: const Color(0xFFF3F1FC),
                       labelStyle: const TextStyle(
-                        color: Color(0xFF2A2A6E),
+                        color: Color(0xFF3B2F8C),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -460,7 +460,7 @@ class _ClinicMapScreenState extends State<ClinicMapScreen> {
             icon: const Icon(Icons.zoom_out_map),
             label: const Text('Ampliar búsqueda'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF3D3D8F),
+              backgroundColor: const Color(0xFF5B4FCF),
               foregroundColor: Colors.white,
             ),
           ),
@@ -565,7 +565,7 @@ class _ClinicMapScreenState extends State<ClinicMapScreen> {
               icon: const Icon(Icons.refresh),
               label: const Text('Reintentar'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF3D3D8F),
+                backgroundColor: const Color(0xFF5B4FCF),
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               ),

@@ -7,9 +7,9 @@ import 'screens/home_screen.dart';
 import 'login/services/auth_service.dart';
 
 // ── Colores institucionales globales ─────────────────────────
-const Color kPrimary = Color(0xFF3D3D8F);
+const Color kPrimary      = Color(0xFF3D3D8F);
 const Color kPrimaryLight = Color(0xFF5C5CAF);
-const Color kPrimaryDark = Color(0xFF2A2A6E);
+const Color kPrimaryDark  = Color(0xFF2A2A6E);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,7 +42,7 @@ class DentalApp extends StatelessWidget {
           surface: Colors.white,
         ),
         useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFFF0F0F8),
+        scaffoldBackgroundColor: const Color(0xFFF0FAF9),
 
         // ── AppBar ────────────────────────────────────────────
         appBarTheme: const AppBarTheme(

@@ -8,15 +8,17 @@ import '../login/services/auth_service.dart';
 import '../login/screens/login_screen.dart';
 import '../dental_dictionary/screens/dental_dictionary_screen.dart';
 import '../admin/services/role_service.dart';
+import '../admin/services/stats_service.dart';
 import '../admin/widgets/admin_guard.dart';
-// import '../admin/screens/admin_dashboard_screen.dart';
-
+import '../admin/screens/admin_dashboard_screen.dart';
+ 
 const Color _kPrimary      = Color(0xFF3D3D8F);
 const Color _kPrimaryDark  = Color(0xFF2A2A6E);
-const Color _kPrimaryLight = Color(0xFF5C5CAF);
-const Color _kAccent       = Color(0xFF8888C8);
+const Color kPrimaryLight = Color(0xFF5C5CAF);
+const Color kAccent       = Color(0xFF8888C8);
 const Color _kSurface      = Color(0xFFF0F0FA);
 const Color _kLightFill    = Color(0xFFD0D0F0);
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -25,7 +27,7 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   late final Future<bool> _isAdminFuture = _checkIsAdmin();
 
   Future<bool> _checkIsAdmin() async {
@@ -35,7 +37,37 @@ class _HomeScreenState extends State<HomeScreen> {
     return user?.isAdmin ?? false;
   }
 
-  void _logout(BuildContext context) async {
+  @override
+  void initState() {
+    super.initState();
+    // Observa cambios de ciclo de vida (app a segundo plano, etc.)
+    WidgetsBinding.instance.addObserver(this);
+    // Garantiza que el cronómetro esté corriendo aunque AuthService
+    // ya lo haya iniciado (por si HomeScreen se reconstruye)
+    StatsService().iniciarSesion();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    // Guarda minutos si se destruye el widget (navegación interna)
+    StatsService().registrarSalida();
+    super.dispose();
+  }
+
+  /// Cuando la app pasa a segundo plano, guarda los minutos acumulados
+  /// y reinicia el cronómetro al volver al primer plano.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
+      StatsService().registrarSalida();
+    } else if (state == AppLifecycleState.resumed) {
+      StatsService().iniciarSesion();
+    }
+  }
+
+  Future<void> _logout(BuildContext context) async {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -61,8 +93,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (confirm == true && context.mounted) {
       try {
+        // registrarSalida() y clearCache() se llaman dentro de AuthService.signOut()
+        // y StatsService.registrarSalida() respectivamente
         RoleService().clearCache();
-        await AuthService().signOut();
+        await AuthService().signOut(); // ya llama StatsService().registrarSalida()
         if (context.mounted) {
           Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (_) => const LoginScreen()),
@@ -87,8 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
       context,
       MaterialPageRoute(
         builder: (_) => const AdminGuard(
-          child: _AdminPlaceholder(),
-          // child: AdminDashboardScreen(),
+          child: AdminDashboardScreen(),
         ),
       ),
     );
@@ -120,27 +153,35 @@ class _HomeScreenState extends State<HomeScreen> {
               _MenuCard(
                 title: 'Análisis con IA',
                 icon: Icons.biotech_outlined,
-                onTap: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (_) => const DentalScanScreen())),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const DentalScanScreen()),
+                ),
               ),
               _MenuCard(
                 title: 'Consejos Dentales',
                 icon: Icons.tips_and_updates_outlined,
-                onTap: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (_) => const DentalTipsScreen())),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const DentalTipsScreen()),
+                ),
               ),
               _MenuCard(
                 title: 'Clínicas Cercanas',
                 icon: Icons.location_on_outlined,
-                onTap: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (_) => const SmartClinicScreen())),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const SmartClinicScreen()),
+                ),
               ),
               _MenuCard(
                 title: 'Diccionario Dental',
                 icon: Icons.menu_book_outlined,
-                onTap: () => Navigator.push(context,
-                    MaterialPageRoute(
-                        builder: (_) => const DentalDictionaryScreen())),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const DentalDictionaryScreen()),
+                ),
               ),
               if (isAdmin) _AdminCard(onTap: () => _openAdmin(context)),
             ];
@@ -180,7 +221,6 @@ class _AdminCard extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Badge "Admin" alineado arriba a la derecha
               Align(
                 alignment: Alignment.topRight,
                 child: Container(
@@ -203,7 +243,6 @@ class _AdminCard extends StatelessWidget {
                   ),
                 ),
               ),
-              // Ícono — misma estructura que _MenuCard
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
@@ -283,49 +322,11 @@ class _MenuCard extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF1A1A3E),
+                  color: Color(0xFF0D2233),
                 ),
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-// ── Placeholder hasta crear AdminDashboardScreen ───────────────
-class _AdminPlaceholder extends StatelessWidget {
-  const _AdminPlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Panel Admin'),
-        backgroundColor: _kPrimaryDark,
-        foregroundColor: Colors.white,
-      ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.construction, size: 72, color: _kAccent),
-            SizedBox(height: 12),
-            Text(
-              'Panel de administración',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: _kPrimaryDark,
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Próximo paso: estadísticas y exportación',
-              style: TextStyle(color: Colors.grey, fontSize: 13),
-            ),
-          ],
         ),
       ),
     );

@@ -7,7 +7,10 @@ import '../widgets/custom_textfield.dart';
 const Color _kPrimaryDark  = Color(0xFF2A2A6E);
 const Color _kPrimary      = Color(0xFF3D3D8F);
 const Color _kPrimaryLight = Color(0xFF5C5CAF);
+const Color _kLightFill    = Color(0xFFD0D0F0);
+const Color _kSurface      = Color(0xFFF0F0FA);
 
+ 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
 

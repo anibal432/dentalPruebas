@@ -11,7 +11,7 @@ const Color _kPrimaryLight = Color(0xFF5C5CAF);
 const Color _kAccent       = Color(0xFF8888C8);
 const Color _kLightFill    = Color(0xFFD0D0F0);
 const Color _kSurface      = Color(0xFFF0F0FA);
-
+ 
 class DentalTipsScreen extends StatefulWidget {
   const DentalTipsScreen({super.key});
 
@@ -215,7 +215,7 @@ class _DentalTipsScreenState extends State<DentalTipsScreen> {
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF1A1A3E),
+                        color: Color(0xFF0D2233),
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
