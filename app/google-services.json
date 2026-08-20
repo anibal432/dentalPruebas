@@ -1,0 +1,174 @@
+{
+  "project_info": {
+    "project_number": "287875927706",
+    "project_id": "dentalai-5915",
+    "storage_bucket": "dentalai-5915.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:287875927706:android:abb71c472df3a1e60d5923",
+        "android_client_info": {
+          "package_name": "com.example.dental_umg"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "287875927706-chb171ihb42clihkocj7kmbbb2sqpqpm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dental_umg",
+            "certificate_hash": "0729bebaec7f6bf39426edea7fcaa8ebbf0b48a2"
+          }
+        },
+        {
+          "client_id": "287875927706-ut5514lnn65opqfbmldqcft1kv0ahbjp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsQ25c_neosOUas2soKh_OSNWriPRsWfc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "287875927706-ut5514lnn65opqfbmldqcft1kv0ahbjp.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "287875927706-1fv7frro5a7ngerl38clktq9ke7tvk85.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.dentalUmg"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:287875927706:android:012f66a98300e4f70d5923",
+        "android_client_info": {
+          "package_name": "com.example.flutter_application_2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "287875927706-1bph6dg1g7ri601ap0mlc05n7m6facrj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.flutter_application_2",
+            "certificate_hash": "0729bebaec7f6bf39426edea7fcaa8ebbf0b48a2"
+          }
+        },
+        {
+          "client_id": "287875927706-ut5514lnn65opqfbmldqcft1kv0ahbjp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsQ25c_neosOUas2soKh_OSNWriPRsWfc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "287875927706-ut5514lnn65opqfbmldqcft1kv0ahbjp.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "287875927706-1fv7frro5a7ngerl38clktq9ke7tvk85.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.dentalUmg"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:287875927706:android:c517287fb33af6320d5923",
+        "android_client_info": {
+          "package_name": "com.umg.dental_umg"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "287875927706-2e6cf3qmjgb3p1b5fl065vpc0tp57433.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.umg.dental_umg",
+            "certificate_hash": "0729bebaec7f6bf39426edea7fcaa8ebbf0b48a2"
+          }
+        },
+        {
+          "client_id": "287875927706-99l74ssnaav7v990767220uqtspcjq7s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.umg.dental_umg",
+            "certificate_hash": "a071c6d3c2d422bb9b812ec0399ec2e47d2f287a"
+          }
+        },
+        {
+          "client_id": "287875927706-9vlq1d1q28msk1spmtvfub4h721iicje.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.umg.dental_umg",
+            "certificate_hash": "d95bfecfdbc7985eb4b362366bfc3cff71e74c22"
+          }
+        },
+        {
+          "client_id": "287875927706-njg0h3aetskqfakcpvv1c5m2uhl29595.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.umg.dental_umg",
+            "certificate_hash": "4bdcd228139fcb0b08b1719e5d34f161b880deb5"
+          }
+        },
+        {
+          "client_id": "287875927706-r45s9g9kiunctg3dqm7g8507r9elnlmo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.umg.dental_umg",
+            "certificate_hash": "e1d2e817486d0d96b63345377616231f66b44056"
+          }
+        },
+        {
+          "client_id": "287875927706-ut5514lnn65opqfbmldqcft1kv0ahbjp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsQ25c_neosOUas2soKh_OSNWriPRsWfc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "287875927706-ut5514lnn65opqfbmldqcft1kv0ahbjp.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "287875927706-1fv7frro5a7ngerl38clktq9ke7tvk85.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.dentalUmg"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
