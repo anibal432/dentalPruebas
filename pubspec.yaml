@@ -1,7 +1,7 @@
 name: dental_umg
 description: Aplicación móvil para consejos y análisis dental
 publish_to: 'none'
-version: 1.0.0+5
+version: 1.0.0+21
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -9,7 +9,16 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  #======================
+  #Excel
+  excel: ^4.0.6
+  path_provider: ^2.1.4
+  share_plus: ^11.1.0
+  #=======================
+  #Mensajes push o notificaciones push
+  firebase_messaging: ^15.1.5
+  flutter_local_notifications: ^18.0.1
+  timezone: ^0.9.4
   # ==============================
   # IA - TensorFlow Lite
   # ==============================
@@ -26,7 +35,7 @@ dependencies:
   # ==============================
   # Google Sign-In
   # ==============================
-  google_sign_in: ^6.2.1
+  google_sign_in: ^7.2.0
 
   # ==============================
   # Geolocalización y Mapas
@@ -70,5 +79,3 @@ flutter:
     - assets/images/logo_dental.png
     - assets/dental_clinics.json
    # - assets/images/icono.png
-
-   

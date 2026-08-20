@@ -6,15 +6,77 @@ import '../services/location_service.dart';
 import 'clinic_detail_screen.dart';
 
 class AffiliatedClinic {
-  final String firestoreId;
+  // Si la clínica ya está registrada en Firestore o en el JSON local, se
+  // identifica por su id (estable). Si viene de OSM (Nominatim/Overpass),
+  // su id puede variar entre fuentes o cambiar si alguien edita el dato en
+  // OpenStreetMap — para esos casos se identifica por coordenadas en su lugar.
+  final String? firestoreId;
+  final double? latitude;
+  final double? longitude;
   final String badgeLabel;
   final String speciality;
-  const AffiliatedClinic({required this.firestoreId, required this.badgeLabel, required this.speciality});
+  // Datos reales de contacto/atención de la clínica. Cuando están presentes,
+  // reemplazan lo que haya traído OSM (que puede venir vacío o desactualizado),
+  // para que el teléfono, horario y servicios mostrados sean siempre correctos.
+  final String? phone;
+  final String? openingHours;
+  final List<String>? services;
+  const AffiliatedClinic({
+    this.firestoreId,
+    this.latitude,
+    this.longitude,
+    required this.badgeLabel,
+    required this.speciality,
+    this.phone,
+    this.openingHours,
+    this.services,
+  }) : assert(
+          firestoreId != null || (latitude != null && longitude != null),
+          'Se necesita firestoreId o coordenadas (latitude/longitude) para identificar la clínica.',
+        );
 }
 
 const List<AffiliatedClinic> _affiliatedList = [
   AffiliatedClinic(firestoreId: 'local-coatepeque-002', badgeLabel: 'Recomendada', speciality: 'Odontología General · Odontopediatría'),
+  AffiliatedClinic(
+    latitude: 14.706303,
+    longitude: -91.864660,
+    badgeLabel: 'Recomendada',
+    speciality: 'Odontología General · Ortodoncia · Implantes',
+    phone: '+502 77751733', 
+    openingHours: 'Lun a vie 7:30 – 17:30 · Sáb 9:00 – 13:00',
+    services: [
+      'Profilaxis (limpieza dental)',
+      'Tratamiento periodontal',
+      'Operatoria dental (rellenos, incrustaciones, carillas)',
+      'Prótesis fija',
+      'Prótesis removible',
+      'Prótesis total',
+      'Implantes',
+      'Endodoncia (tratamiento de canales)',
+      'Extracciones dentales',
+      'Cirugía oral',
+      'Cirugía de cordales',
+      'Ortodoncia',
+      'Ortodoncia interceptiva',
+    ],
+  ),
 ];
+
+// Radio de tolerancia para considerar que una clínica de OSM es "la misma"
+// que la de la lista de afiliados, aunque su id de fuente externa cambie.
+const double _affiliatedMatchRadiusKm = 0.15; // 150 metros
+
+AffiliatedClinic? _matchAffiliated(DentalClinic clinic) {
+  for (final a in _affiliatedList) {
+    if (a.firestoreId != null && a.firestoreId == clinic.id) return a;
+    if (a.latitude != null && a.longitude != null) {
+      final dist = clinic.calculateDistance(a.latitude!, a.longitude!);
+      if (dist <= _affiliatedMatchRadiusKm) return a;
+    }
+  }
+  return null;
+}
 
 class _ScoredClinic {
   final DentalClinic clinic;
@@ -27,10 +89,20 @@ class _ScoredClinic {
 }
 
 List<_ScoredClinic> _scoreAndSort(List<DentalClinic> clinics, {String? detectedCondition, Set<String>? firestoreIds}) {
-  final affiliatedMap = {for (final a in _affiliatedList) a.firestoreId: a};
   firestoreIds ??= {};
   final scored = clinics.map((clinic) {
-    final aff = affiliatedMap[clinic.id];
+    final aff = _matchAffiliated(clinic);
+    // Si es una clínica afiliada con datos reales de contacto, esos datos
+    // reemplazan lo que haya traído OSM (frecuentemente vacío o desactualizado),
+    // para que el teléfono, horario y lista de servicios mostrados sean correctos.
+    final displayClinic = aff != null
+        ? clinic.copyWith(
+            phone: aff.phone ?? clinic.phone,
+            phoneNumber: aff.phone ?? clinic.phoneNumber,
+            openingHours: aff.openingHours ?? clinic.openingHours,
+            services: aff.services ?? clinic.services,
+          )
+        : clinic;
     final isFS = firestoreIds!.contains(clinic.id);
     final dist = clinic.distanceInKm ?? 10.0;
     final distScore = ((10.0 - dist.clamp(0, 10)) * 2).clamp(0.0, 20.0);
@@ -56,7 +128,7 @@ List<_ScoredClinic> _scoreAndSort(List<DentalClinic> clinics, {String? detectedC
     } else {
       reason = '📍 ${dist.toStringAsFixed(1)} km de distancia';
     }
-    return _ScoredClinic(clinic: clinic, score: total, affiliated: aff, recommendReason: reason, isFirestore: isFS);
+    return _ScoredClinic(clinic: displayClinic, score: total, affiliated: aff, recommendReason: reason, isFirestore: isFS);
   }).toList()..sort((a, b) => b.score.compareTo(a.score));
   return scored;
 }
@@ -93,10 +165,73 @@ class _SmartClinicScreenState extends State<SmartClinicScreen> with SingleTicker
   Future<void> _init() async {
     setState(() { _loading = true; _error = null; });
     Position? pos = await _locationService.getCurrentLocation();
-    if (pos != null) { _isRealGPS = true; } else { pos = _locationService.getGuatemalaCityPosition(); _isRealGPS = false; }
+
+    if (pos != null) {
+      _isRealGPS = true;
+    } else {
+      _isRealGPS = false;
+      // Antes esto caía directo a Guatemala City sin avisar nada al usuario,
+      // por lo que quien rechazaba el permiso (o lo tenía denegado
+      // permanentemente) nunca se enteraba de que debía activarlo. Se avisa
+      // explícitamente, igual que ya se hacía en ClinicMapScreen.
+      if (!mounted) return;
+      final permanentlyDenied = await _locationService.isPermissionPermanentlyDenied();
+      if (!mounted) return;
+      final usarFallback = await _showLocationFailedDialog(permanentlyDenied);
+      if (!usarFallback) {
+        setState(() {
+          _loading = false;
+          _error = 'Necesitamos acceso a tu ubicación para mostrar clínicas cercanas.';
+        });
+        return;
+      }
+      pos = _locationService.getGuatemalaCityPosition();
+    }
+
     if (!mounted) return;
     setState(() => _position = pos);
     await _loadClinics();
+  }
+
+  // Muestra por qué no se pudo obtener la ubicación y qué hacer al respecto.
+  // Devuelve true si el usuario eligió seguir con Guatemala City como
+  // referencia, y false si prefirió ir a Configuración a activar el permiso.
+  Future<bool> _showLocationFailedDialog(bool permanentlyDenied) async {
+    final result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        icon: const Icon(Icons.location_off, color: Colors.orange, size: 36),
+        title: const Text('Ubicación no disponible', textAlign: TextAlign.center),
+        content: Text(
+          permanentlyDenied
+              ? 'El permiso de ubicación fue denegado permanentemente. '
+                'Ve a Configuración > Aplicaciones > dental_umg > Permisos '
+                'y activa "Ubicación".'
+              : 'No se pudo obtener tu ubicación actual.\n\n'
+                '¿Deseas buscar clínicas usando Guatemala City como referencia, '
+                'o prefieres activar los permisos de ubicación?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context, false);
+              _locationService.openAppSettings();
+            },
+            child: Text(permanentlyDenied ? 'Abrir configuración' : 'Activar permisos'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF5B4FCF),
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Buscar igual'),
+          ),
+        ],
+      ),
+    );
+    return result ?? false;
   }
 
   Future<void> _loadClinics() async {
@@ -105,7 +240,11 @@ class _SmartClinicScreenState extends State<SmartClinicScreen> with SingleTicker
     try {
       final raw = await _locationService.findNearbyDentalClinics(latitude: _position!.latitude, longitude: _position!.longitude, radiusKm: _radiusKm);
       if (!mounted) return;
-      final firestoreIds = raw.where((c) => !RegExp(r'^\d+$').hasMatch(c.id) && !c.id.startsWith('local-')).map((c) => c.id).toSet();
+      // Se usa el campo `source` (asignado en LocationService/DentalClinic) en vez
+      // de adivinar la fuente por el formato del id: esa heurística marcaba por
+      // error las clínicas de Nominatim (ids "nominatim_12345") como si fueran
+      // de Firestore, dándoles el badge "Verificada" y el boost de prioridad.
+      final firestoreIds = raw.where((c) => c.source == 'firestore').map((c) => c.id).toSet();
       final scored = _scoreAndSort(raw, detectedCondition: widget.detectedCondition, firestoreIds: firestoreIds);
       setState(() {
         _scored = scored;
@@ -396,13 +535,23 @@ class _SmartClinicScreenState extends State<SmartClinicScreen> with SingleTicker
                     Wrap(
                       spacing: 6, runSpacing: 4,
                       children: clinic.services.take(4).map((s) => Container(
+                        // Mismo fix que en clinic_detail_screen.dart: sin una
+                        // cota de ancho, un servicio con texto largo se sale
+                        // de la pantalla en vez de hacer wrap dentro del chip.
+                        constraints: BoxConstraints(
+                          maxWidth: MediaQuery.of(context).size.width - 60,
+                        ),
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
                           color: const Color(0xFFF3F1FC),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(color: const Color(0xFFE0DBF7)),
                         ),
-                        child: Text(s, style: const TextStyle(color: Color(0xFF3B2F8C), fontSize: 11)),
+                        child: Text(
+                          s,
+                          softWrap: true,
+                          style: const TextStyle(color: Color(0xFF3B2F8C), fontSize: 11),
+                        ),
                       )).toList(),
                     ),
                   ],

@@ -53,20 +53,27 @@ class LocationService {
     try {
       bool hasPermission = await checkPermissions();
       if (!hasPermission) return null;
+      // Antes se intentaba primero getLastKnownPosition() (una ubicación en
+      // caché, que puede ser de horas o días atrás) y solo si eso "fallaba"
+      // se pedía la posición real — pero getLastKnownPosition() casi nunca
+      // falla, así que en la práctica casi nunca se llegaba a pedir el GPS
+      // actual. Ahora se intenta primero obtener la posición real; el
+      // último conocido queda solo como respaldo si el GPS no responde a
+      // tiempo.
+      try {
+        return await Geolocator.getCurrentPosition(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.medium,
+            timeLimit: Duration(seconds: 10),
+          ),
+        );
+      } catch (e) {
+        debugPrint('⚠️ GPS falló, se intenta con la última ubicación conocida: $e');
+      }
       try {
         Position? last = await Geolocator.getLastKnownPosition();
         if (last != null) return last;
       } catch (_) {}
-      try {
-        return await Geolocator.getCurrentPosition(
-          locationSettings: const LocationSettings(
-            accuracy: LocationAccuracy.low,
-            timeLimit: Duration(seconds: 8),
-          ),
-        );
-      } catch (e) {
-        debugPrint('⚠️ GPS falló: $e');
-      }
       return null;
     } catch (e) {
       debugPrint('❌ Error ubicación: $e');
@@ -309,6 +316,7 @@ class LocationService {
       department: address['state'] ?? address['province'],
       osmType: item['osm_type'],
       osmId: int.tryParse(item['osm_id']?.toString() ?? ''),
+      source: 'nominatim',
     );
   }
 
@@ -436,6 +444,7 @@ out center tags;
           city: map['city'] as String?,
           department: map['department'] as String?,
           openingHours: map['openingHours'] as String?,
+          source: 'local',
         );
       }).toList();
       _localClinicsCache = clinics;
@@ -501,6 +510,7 @@ out center tags;
             department: data['department'],
             rating: (data['rating'] as num?)?.toDouble(),
             distanceInKm: dist,
+            source: 'firestore',
           ));
           debugPrint('🏥 Firestore: ${data['name']} (${dist.toStringAsFixed(2)} km)');
         }

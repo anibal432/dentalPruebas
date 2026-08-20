@@ -5,11 +5,12 @@ import 'firebase_options.dart';
 import 'login/screens/login_screen.dart';
 import 'screens/home_screen.dart';
 import 'login/services/auth_service.dart';
+import 'services/notification_service.dart';
 
 // ── Colores institucionales globales ─────────────────────────
-const Color kPrimary      = Color(0xFF3D3D8F);
+const Color kPrimary = Color(0xFF3D3D8F);
 const Color kPrimaryLight = Color(0xFF5C5CAF);
-const Color kPrimaryDark  = Color(0xFF2A2A6E);
+const Color kPrimaryDark = Color(0xFF2A2A6E);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,6 +22,17 @@ void main() async {
     debugPrint('✅ Firebase inicializado correctamente');
   } catch (e) {
     debugPrint('❌ Error inicializando Firebase: $e');
+  }
+
+  // ── Inicializar notificaciones locales ─────────────────────
+  try {
+    final notificationService = NotificationService();
+
+    await notificationService.init();
+
+    debugPrint('✅ Notificaciones locales inicializadas');
+  } catch (e) {
+    debugPrint('❌ Error con las notificaciones: $e');
   }
 
   runApp(const DentalApp());
@@ -98,7 +110,10 @@ class DentalApp extends StatelessWidget {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: kPrimary, width: 2),
+            borderSide: const BorderSide(
+              color: kPrimary,
+              width: 2,
+            ),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -107,7 +122,8 @@ class DentalApp extends StatelessWidget {
         ),
 
         // ── FloatingActionButton ──────────────────────────────
-        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+        floatingActionButtonTheme:
+            const FloatingActionButtonThemeData(
           backgroundColor: kPrimary,
           foregroundColor: Colors.white,
         ),
@@ -143,7 +159,9 @@ class AuthWrapper extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
             body: Center(
-              child: CircularProgressIndicator(color: kPrimary),
+              child: CircularProgressIndicator(
+                color: kPrimary,
+              ),
             ),
           );
         }

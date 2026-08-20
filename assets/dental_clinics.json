@@ -1,0 +1,466 @@
+[
+  {
+    "id": "local-coatepeque-001",
+    "name": "Bright Smile - Dra. Mishell Zacarias",
+    "address": "Local 36, CC. Internacional Coatepeque, 3ra Av 9-74, Coatepeque, Quetzaltenango",
+    "latitude": 14.7074188,
+    "longitude": -91.8659869,
+    "phone": "+502 3043-2292",
+    "services": [
+      "Odontología General"
+    ],
+    "city": "Coatepeque",
+    "department": "Quetzaltenango",
+    "openingHours": "Lun-Vie 8:30-17:00, Sáb 8:30-13:00"
+  },
+  {
+    "id": "local-coatepeque-002",
+    "name": "Clínica Dental Para Niños y Adultos (Dra. Mayling Girón)",
+    "address": "Coatepeque, Quetzaltenango",
+    "latitude": 14.7061136,
+    "longitude": -91.8646897,
+    "phone": "+502 7775-1733",
+    "services": [
+      "Odontología General",
+      "Odontopediatría"
+    ],
+    "city": "Coatepeque",
+    "department": "Quetzaltenango",
+    "openingHours": "Lun-Vie 8:00-18:00, Sáb 9:00-13:00"
+  },
+  {
+    "id": "local-coatepeque-003",
+    "name": "Clínica Dental Zoe",
+    "address": "Coatepeque, Quetzaltenango",
+    "latitude": 14.698622,
+    "longitude": -91.8632174,
+    "phone": "+502 7775-5803",
+    "services": [
+      "Odontología General",
+      "Cirugía Maxilofacial"
+    ],
+    "city": "Coatepeque",
+    "department": "Quetzaltenango",
+    "openingHours": "Lun-Vie 9:00-18:00, Sáb 9:00-17:00"
+  },
+  {
+    "id": "local-coatepeque-004",
+    "name": "Confident Clínica Dental",
+    "address": "3a Avenida 1-38 Zona 3, Barrio San Francisco, frente a la PNC, Coatepeque",
+    "latitude": 14.6988462,
+    "longitude": -91.8633189,
+    "phone": "+502 5582-4168",
+    "services": [
+      "Odontología General"
+    ],
+    "city": "Coatepeque",
+    "department": "Quetzaltenango",
+    "openingHours": "Lun-Jue 8:00-13:00 y 14:30-18:00"
+  },
+  {
+    "id": "local-coatepeque-005",
+    "name": "Avant Clínica Dental",
+    "address": "3ra calle 5-17, Coatepeque, Quetzaltenango",
+    "latitude": 14.7021838,
+    "longitude": -91.8610848,
+    "phone": "+502 7775-1378",
+    "services": [
+      "Odontología General"
+    ],
+    "city": "Coatepeque",
+    "department": "Quetzaltenango",
+    "openingHours": "Lun-Vie 8:30-12:30 y 15:00-18:00, Sáb 8:00-12:00"
+  },
+  {
+    "id": "local-coatepeque-006",
+    "name": "Smart Dent - Dr. David Gallegos",
+    "address": "3 Calle 1-83, Coatepeque, Quetzaltenango",
+    "latitude": 14.6995531,
+    "longitude": -91.866752,
+    "phone": "+502 4622-9352",
+    "services": [
+      "Odontología General",
+      "Ortodoncia"
+    ],
+    "city": "Coatepeque",
+    "department": "Quetzaltenango",
+    "openingHours": "Lun-Sáb 8:00-19:00"
+  },
+  {
+    "id": "local-coatepeque-007",
+    "name": "Humanidad Hospital Privado S.A.",
+    "address": "Coatepeque, Quetzaltenango",
+    "latitude": 14.702294,
+    "longitude": -91.8657992,
+    "phone": "+502 7775-6110",
+    "services": [
+      "Odontología General",
+      "Emergencias"
+    ],
+    "city": "Coatepeque",
+    "department": "Quetzaltenango",
+    "openingHours": "24 horas"
+  },
+  {
+    "id": "local-coatepeque-008",
+    "name": "Clínica Dental Dr. Pacheco",
+    "address": "3a. Calle 54, Coatepeque, Quetzaltenango",
+    "latitude": 14.7017341,
+    "longitude": -91.8643523,
+    "phone": "+502 7775-1245",
+    "services": [
+      "Odontología General"
+    ],
+    "city": "Coatepeque",
+    "department": "Quetzaltenango",
+    "openingHours": "Lun-Sáb 7:00-19:00"
+  },
+  {
+    "id": "local-coatepeque-009",
+    "name": "Soluciones Dentales",
+    "address": "5a calle 1-18 zona 1, Barrio La Batalla, Coatepeque, Quetzaltenango",
+    "latitude": 14.7033495,
+    "longitude": -91.8641167,
+    "phone": null,
+    "services": [
+      "Odontología General"
+    ],
+    "city": "Coatepeque",
+    "department": "Quetzaltenango",
+    "openingHours": null
+  },
+  {
+    "id": "local-coatepeque-010",
+    "name": "Centro Médico Coatepeque",
+    "address": "3ra. Avenida 1-61 zona 1, Barrio La Batalla, Coatepeque, Quetzaltenango",
+    "latitude": 14.7012303,
+    "longitude": -91.8628165,
+    "phone": "+502 7775-1624",
+    "services": [
+      "Odontología General",
+      "Hospital General"
+    ],
+    "city": "Coatepeque",
+    "department": "Quetzaltenango",
+    "openingHours": "24 horas"
+  },
+  {
+    "id": "local-coatepeque-011",
+    "name": "Dr. Luis Eduardo Pérez",
+    "address": "4a. Calle 3-60 zona 1, Coatepeque, Quetzaltenango",
+    "latitude": 14.7026413,
+    "longitude": -91.8619347,
+    "phone": "+502 7775-0092",
+    "services": [
+      "Ortodoncia",
+      "Diseño de Sonrisa",
+      "Implantes",
+      "Endodoncia"
+    ],
+    "city": "Coatepeque",
+    "department": "Quetzaltenango",
+    "openingHours": "Lun-Vie 7:00-12:00 y 14:00-17:00, Sáb 7:00-12:00 y 14:00-16:00"
+  },
+  {
+    "id": "local-coatepeque-012",
+    "name": "Ovelas Dent",
+    "address": "Barrio La Batalla, Av 20 de Octubre 2-08, Coatepeque, Quetzaltenango",
+    "latitude": 14.7012842,
+    "longitude": -91.86355,
+    "phone": "+502 5911-2514",
+    "services": [
+      "Odontología General"
+    ],
+    "city": "Coatepeque",
+    "department": "Quetzaltenango",
+    "openingHours": "Lun-Vie 8:00-18:00, Sáb 8:00-13:00"
+  },
+  {
+    "id": "local-coatepeque-013",
+    "name": "Laboratorio Dental BONA",
+    "address": "Flores Costa Cuca, Quetzaltenango",
+    "latitude": 14.6538875,
+    "longitude": -91.8263594,
+    "phone": null,
+    "services": [
+      "Laboratorio Dental",
+      "Prótesis"
+    ],
+    "city": "Flores Costa Cuca",
+    "department": "Quetzaltenango",
+    "openingHours": null
+  },
+  {
+    "id": "local-coatepeque-014",
+    "name": "Clínica Dental Health & Care",
+    "address": "C.C. Trinidad, un costado de los cines, Retalhuleu",
+    "latitude": 14.5332154,
+    "longitude": -91.681357,
+    "phone": "+502 5951-0709",
+    "services": [
+      "Odontología General"
+    ],
+    "city": "Retalhuleu",
+    "department": "Retalhuleu",
+    "openingHours": "Lun-Dom 9:00-19:00"
+  },
+  {
+    "id": "local-coatepeque-015",
+    "name": "Dental Solutions Clínica Dental",
+    "address": "Blvr. Centenario 6-90, Retalhuleu",
+    "latitude": 14.5445111,
+    "longitude": -91.677706,
+    "phone": "+502 7736-3849",
+    "services": [
+      "Odontología General"
+    ],
+    "city": "Retalhuleu",
+    "department": "Retalhuleu",
+    "openingHours": "Lun-Vie 8:00-18:00, Sáb 8:00-13:00"
+  },
+  {
+    "id": "local-coatepeque-016",
+    "name": "Dra. Rita Ruano Clínica Dental",
+    "address": "5a Calle 7-29, Retalhuleu",
+    "latitude": 14.5347892,
+    "longitude": -91.6774752,
+    "phone": null,
+    "services": [
+      "Odontología General"
+    ],
+    "city": "Retalhuleu",
+    "department": "Retalhuleu",
+    "openingHours": "Lun-Vie 9:00-17:00, Sáb 9:00-12:00"
+  },
+  {
+    "id": "local-coatepeque-017",
+    "name": "Odontología y Ortodoncia",
+    "address": "Retalhuleu",
+    "latitude": 14.5442042,
+    "longitude": -91.6753251,
+    "phone": null,
+    "services": [
+      "Ortodoncia",
+      "Odontología General"
+    ],
+    "city": "Retalhuleu",
+    "department": "Retalhuleu",
+    "openingHours": "Lun-Vie 9:00-17:00"
+  },
+  {
+    "id": "local-coatepeque-018",
+    "name": "Clínica Dental Dra. Miriam Tzorin",
+    "address": "5a Av 10-69, Retalhuleu",
+    "latitude": 14.539747,
+    "longitude": -91.6753985,
+    "phone": null,
+    "services": [
+      "Odontología General"
+    ],
+    "city": "Retalhuleu",
+    "department": "Retalhuleu",
+    "openingHours": null
+  },
+  {
+    "id": "local-coatepeque-019",
+    "name": "Dentalris",
+    "address": "Retalhuleu",
+    "latitude": 14.5371062,
+    "longitude": -91.6856362,
+    "phone": null,
+    "services": [
+      "Odontología General"
+    ],
+    "city": "Retalhuleu",
+    "department": "Retalhuleu",
+    "openingHours": null
+  },
+  {
+    "id": "local-coatepeque-020",
+    "name": "Dental Dueñas",
+    "address": "Retalhuleu",
+    "latitude": 14.5830481,
+    "longitude": -91.7753228,
+    "phone": "+502 3193-0026",
+    "services": [
+      "Odontología General"
+    ],
+    "city": "Retalhuleu",
+    "department": "Retalhuleu",
+    "openingHours": "Lun-Vie 8:00-13:00 y 14:30-17:00, Dom 8:30-13:00"
+  },
+  {
+    "id": "local-coatepeque-021",
+    "name": "Dontix - Creando Sonrisas",
+    "address": "Plaza Champel, San Felipe, Retalhuleu",
+    "latitude": 14.625034,
+    "longitude": -91.5973248,
+    "phone": "+502 7791-0827",
+    "services": [
+      "Odontopediatría",
+      "Blanqueamiento",
+      "Odontología General"
+    ],
+    "city": "San Felipe",
+    "department": "Retalhuleu",
+    "openingHours": "Lun-Vie 8:00-18:00, Sáb 8:00-12:00"
+  },
+  {
+    "id": "local-coatepeque-022",
+    "name": "Clínica Dental Curativo",
+    "address": "Zona 1, 03 calle, Pajapita, San Marcos",
+    "latitude": 14.7220846,
+    "longitude": -92.0332809,
+    "phone": "+502 3290-8625",
+    "services": [
+      "Odontología General"
+    ],
+    "city": "Pajapita",
+    "department": "San Marcos",
+    "openingHours": "Lun-Sáb 9:00-18:00"
+  },
+  {
+    "id": "local-coatepeque-023",
+    "name": "Clínica de Especialidades Dentales ADEC",
+    "address": "1ra Calle 5-28 zona 1, Malacatán, San Marcos",
+    "latitude": 14.9134576,
+    "longitude": -92.0564407,
+    "phone": "+502 7776-9423",
+    "services": [
+      "Odontología General",
+      "Especialidades"
+    ],
+    "city": "Malacatán",
+    "department": "San Marcos",
+    "openingHours": "Lun-Sáb 9:00-13:00 y 15:00-18:00"
+  },
+  {
+    "id": "local-coatepeque-024",
+    "name": "Dental Prosalud Malacatán",
+    "address": "Colonia Alejos, 1a Calle, Malacatán, San Marcos",
+    "latitude": 14.9139605,
+    "longitude": -92.0566441,
+    "phone": "+502 5887-1135",
+    "services": [
+      "Odontología General"
+    ],
+    "city": "Malacatán",
+    "department": "San Marcos",
+    "openingHours": "Lun-Sáb 8:30-17:30"
+  },
+  {
+    "id": "local-coatepeque-025",
+    "name": "Clínica Dental Dr. Oliver Velásquez",
+    "address": "Malacatán, San Marcos",
+    "latitude": 14.9089077,
+    "longitude": -92.0581413,
+    "phone": "+502 7777-1062",
+    "services": [
+      "Odontología General"
+    ],
+    "city": "Malacatán",
+    "department": "San Marcos",
+    "openingHours": null
+  },
+  {
+    "id": "local-coatepeque-026",
+    "name": "EscAr Dent",
+    "address": "5ta calle 3-48, Malacatán, San Marcos",
+    "latitude": 14.9089748,
+    "longitude": -92.0615904,
+    "phone": "+502 3551-6880",
+    "services": [
+      "Odontología General"
+    ],
+    "city": "Malacatán",
+    "department": "San Marcos",
+    "openingHours": "Lun-Vie 9:00-18:00, Sáb 9:00-13:00"
+  },
+  {
+    "id": "local-coatepeque-027",
+    "name": "Clínica Dental Sonrisa",
+    "address": "2a Calle 8-31, Malacatán, San Marcos",
+    "latitude": 14.9125185,
+    "longitude": -92.0540487,
+    "phone": "+502 7777-1062",
+    "services": [
+      "Odontología General"
+    ],
+    "city": "Malacatán",
+    "department": "San Marcos",
+    "openingHours": "Lun-Vie 8:00-18:00, Sáb 8:00-13:00"
+  },
+  {
+    "id": "local-coatepeque-028",
+    "name": "Dental Romero",
+    "address": "3ra av. 1ra calle zona 1, Malacatán, San Marcos",
+    "latitude": 14.9135006,
+    "longitude": -92.0580169,
+    "phone": "+502 3175-3427",
+    "services": [
+      "Odontología General"
+    ],
+    "city": "Malacatán",
+    "department": "San Marcos",
+    "openingHours": "Lun-Sáb 8:00-17:30"
+  },
+  {
+    "id": "local-coatepeque-029",
+    "name": "Laboratorio Dental Universal",
+    "address": "03 calle 01-054 zona 1, Tecún Umán, San Marcos",
+    "latitude": 14.6789454,
+    "longitude": -92.1418494,
+    "phone": "+502 5425-0052",
+    "services": [
+      "Laboratorio Dental",
+      "Prótesis"
+    ],
+    "city": "Tecún Umán",
+    "department": "San Marcos",
+    "openingHours": "Lun-Dom 8:00-18:00"
+  },
+  {
+    "id": "local-coatepeque-030",
+    "name": "Clínica Dental Familiar",
+    "address": "Zona 4, 2 Calle Parinox, San Sebastián, Retalhuleu",
+    "latitude": 14.5599422,
+    "longitude": -91.6457396,
+    "phone": "+502 7772-2050",
+    "services": [
+      "Odontología General"
+    ],
+    "city": "San Sebastián",
+    "department": "Retalhuleu",
+    "openingHours": "Lun-Sáb 9:00-13:00 y 15:00-18:00"
+  },
+  {
+    "id": "local-coatepeque-031",
+    "name": "CREO Centro de Rehabilitación y Estética Oral",
+    "address": "1a calle 5-10, San Pedro Sacatepéquez, San Marcos",
+    "latitude": 14.9690628,
+    "longitude": -91.7898346,
+    "phone": "+502 7965-3267",
+    "services": [
+      "Odontología General",
+      "Estética Oral",
+      "Cirugía"
+    ],
+    "city": "San Pedro Sacatepéquez",
+    "department": "San Marcos",
+    "openingHours": "Lun-Vie 8:00-18:00, Sáb 8:00-13:00"
+  },
+  {
+    "id": "local-coatepeque-032",
+    "name": "DENTEX Clínicas Dental SM",
+    "address": "Calzada Revolución del 71, Plaza Adonaí, San Marcos",
+    "latitude": 14.9644615,
+    "longitude": -91.7890914,
+    "phone": "+502 4837-9577",
+    "services": [
+      "Odontología General"
+    ],
+    "city": "San Marcos",
+    "department": "San Marcos",
+    "openingHours": null
+  }
+]

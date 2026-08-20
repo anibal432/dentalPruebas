@@ -28,6 +28,12 @@ class DentalClinic {
   final int? osmId;
   final Map<String, dynamic>? tags;
 
+  // Fuente real del dato: 'firestore' | 'osm' | 'nominatim' | 'local' | 'unknown'.
+  // Se usa para decidir qué clínicas se muestran como "Verificada" y para
+  // priorizarlas, en vez de adivinar la fuente a partir del formato del id
+  // (esa heurística fallaba con los ids de Nominatim, ej. "nominatim_12345").
+  final String source;
+
   DentalClinic({
     required this.id,
     required this.name,
@@ -51,6 +57,7 @@ class DentalClinic {
     this.osmType,
     this.osmId,
     this.tags,
+    this.source = 'unknown',
   });
 
   // Calcular distancia desde la ubicación del usuario (en km)
@@ -131,6 +138,7 @@ class DentalClinic {
       osmType: element['type'],
       osmId: element['id'],
       tags: tags,
+      source: 'osm',
     );
   }
 
@@ -191,6 +199,7 @@ class DentalClinic {
       department: data['department'],
       website: data['website'],
       openingHours: data['openingHours'],
+      source: 'firestore',
     );
   }
 
@@ -236,6 +245,7 @@ class DentalClinic {
     String? openingHours,
     int? totalRatings,
     String? phoneNumber,
+    String? source,
   }) {
     return DentalClinic(
       id: id ?? this.id,
@@ -260,6 +270,7 @@ class DentalClinic {
       osmType: osmType,
       osmId: osmId,
       tags: tags,
+      source: source ?? this.source,
     );
   }
 }

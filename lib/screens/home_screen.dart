@@ -11,7 +11,10 @@ import '../admin/services/role_service.dart';
 import '../admin/services/stats_service.dart';
 import '../admin/widgets/admin_guard.dart';
 import '../admin/screens/admin_dashboard_screen.dart';
- 
+import 'recordatorios_screen.dart'; // mismo directorio: lib/screens/
+import 'feedback_screen.dart'; // ✅ NUEVO: pantalla de feedback
+import 'account_screen.dart'; // ✅ NUEVO: pantalla de cuenta
+
 const Color _kPrimary      = Color(0xFF3D3D8F);
 const Color _kPrimaryDark  = Color(0xFF2A2A6E);
 const Color kPrimaryLight = Color(0xFF5C5CAF);
@@ -127,6 +130,29 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
+  void _openRecordatorios(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const RecordatoriosScreen()),
+    );
+  }
+
+  // ✅ NUEVO: abre la pantalla de feedback
+  void _openFeedback(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const FeedbackScreen()),
+    );
+  }
+
+  // ✅ NUEVO: abre la pantalla de cuenta (con opción de eliminar cuenta)
+  void _openAccount(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const AccountScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -183,7 +209,29 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       builder: (_) => const DentalDictionaryScreen()),
                 ),
               ),
-              if (isAdmin) _AdminCard(onTap: () => _openAdmin(context)),
+              _MenuCard(
+                title: 'Mis Recordatorios',
+                icon: Icons.event_note_rounded,
+                onTap: () => _openRecordatorios(context),
+              ),
+              // ✅ NUEVO: tarjeta de Feedback
+              _MenuCard(
+                title: 'Feedback',
+                icon: Icons.feedback_outlined,
+                onTap: () => _openFeedback(context),
+              ),
+              // ✅ NUEVO: tarjeta de Mi Cuenta
+              _MenuCard(
+                title: 'Mi Cuenta',
+                icon: Icons.manage_accounts_outlined,
+                onTap: () => _openAccount(context),
+              ),
+              if (isAdmin)
+                _AdminCard(
+                  title: 'Panel Admin',
+                  icon: Icons.bar_chart_rounded,
+                  onTap: () => _openAdmin(context),
+                ),
             ];
 
             return GridView.count(
@@ -203,7 +251,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 // ── Card de administración ─────────────────────────────────────
 class _AdminCard extends StatelessWidget {
   final VoidCallback onTap;
-  const _AdminCard({required this.onTap});
+  final String title;
+  final IconData icon;
+
+  const _AdminCard({
+    required this.onTap,
+    this.title = 'Panel Admin',
+    this.icon = Icons.bar_chart_rounded,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -251,19 +306,15 @@ class _AdminCard extends StatelessWidget {
                   border: Border.all(
                       color: Colors.white.withAlpha(50), width: 1),
                 ),
-                child: const Icon(
-                  Icons.bar_chart_rounded,
-                  size: 32,
-                  color: Colors.white,
-                ),
+                child: Icon(icon, size: 32, color: Colors.white),
               ),
               const SizedBox(height: 12),
-              const Text(
-                'Panel Admin',
+              Text(
+                title,
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,

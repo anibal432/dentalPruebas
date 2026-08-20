@@ -7,8 +7,20 @@ import '../../admin/services/stats_service.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FirebaseFirestore _db = FirebaseFirestore.instance;
+
+  // ── google_sign_in v7: instancia singleton + init perezoso ─
+  final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
+  bool _googleInitialized = false;
+
+  Future<void> _ensureGoogleInit() async {
+  if (_googleInitialized) return;
+  await _googleSignIn.initialize(
+    serverClientId:
+        '287875927706-ut5514lnn65opqfbmldqcft1kv0ahbjp.apps.googleusercontent.com',
+  );
+  _googleInitialized = true;
+}
 
   // ── Email y contraseña ────────────────────────────────────
   Future<User?> signInWithEmailAndPassword(
@@ -56,15 +68,20 @@ class AuthService {
     }
   }
 
-  // ── Google Sign-In ────────────────────────────────────────
+  // ── Google Sign-In (API v7 / Credential Manager) ──────────
   Future<User?> signInWithGoogle() async {
     try {
-      final googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) return null;
+      await _ensureGoogleInit();
 
-      final googleAuth = await googleUser.authentication;
+      final GoogleSignInAccount googleUser =
+          await _googleSignIn.authenticate();
+
+      final GoogleSignInAuthentication googleAuth =
+          googleUser.authentication;
+
+      // v7 ya no expone accessToken directamente en `authentication`;
+      // para Firebase Auth basta con el idToken.
       final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
@@ -73,6 +90,13 @@ class AuthService {
         await _registrarUsuario(result.user!, metodoLogin: 'google.com');
       }
       return result.user;
+    } on GoogleSignInException catch (e) {
+      // El usuario canceló el diálogo, u otro error propio de Google Sign-In
+      debugPrint('Error en Google Sign-In (${e.code}): ${e.description}');
+      if (e.code == GoogleSignInExceptionCode.canceled) {
+        return null;
+      }
+      rethrow;
     } catch (e) {
       debugPrint('Error en Google Sign-In: $e');
       rethrow;

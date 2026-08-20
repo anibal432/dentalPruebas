@@ -1,7 +1,12 @@
 // lib/admin/screens/admin_dashboard_screen.dart
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
+// Prefijo "xls" para evitar choques de nombres con Material (Border, Color, etc.)
+import 'package:excel/excel.dart' as xls;
 
 const Color _kPrimary      = Color(0xFF3D3D8F);
 const Color _kPrimaryDark  = Color(0xFF2A2A6E);
@@ -22,6 +27,10 @@ class _DashboardData {
   final List<_UsuarioReciente> recientes;
   final Map<String, int> registrosPorDia;
   final int usuariosActivos30dias;
+  final List<_UsuarioReciente> todosUsuarios;
+  final int usuariosGoogle;
+  final int usuariosEmail;
+  final int usuariosSinIngreso;
 
   const _DashboardData({
     required this.totalUsuarios,
@@ -35,6 +44,10 @@ class _DashboardData {
     required this.recientes,
     required this.registrosPorDia,
     required this.usuariosActivos30dias,
+    required this.todosUsuarios,
+    required this.usuariosGoogle,
+    required this.usuariosEmail,
+    required this.usuariosSinIngreso,
   });
 }
 
@@ -67,6 +80,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
     with SingleTickerProviderStateMixin {
   _DashboardData? _data;
   bool _loading = true;
+  bool _exportando = false;
   String? _error;
   late AnimationController _animController;
   late Animation<double> _fadeAnim;
@@ -205,6 +219,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
         recientes:             recientes.take(20).toList(),
         registrosPorDia:       registrosDia,
         usuariosActivos30dias: activos30,
+        todosUsuarios:         recientes,
+        usuariosGoogle:        loginMethods['google.com'] ?? 0,
+        usuariosEmail:         loginMethods['password'] ?? 0,
+        usuariosSinIngreso:
+            recientes.where((u) => u.ultimoIngreso.year == 2000).length,
       );
 
       if (!mounted) return;
@@ -234,6 +253,162 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
     return names[(weekday - 1).clamp(0, 6)];
   }
 
+  Future<void> _exportarExcel() async {
+    if (_data == null || _exportando) return;
+    setState(() => _exportando = true);
+
+    try {
+      final d = _data!;
+      final excel = xls.Excel.createExcel();
+      final nombreHojaDefault = excel.getDefaultSheet();
+
+      // ---------- Hoja "Resumen" ----------
+      final resumen = excel['Resumen'];
+      resumen.appendRow([
+        xls.TextCellValue('Métrica'),
+        xls.TextCellValue('Valor'),
+      ]);
+      final filasResumen = <List<xls.CellValue>>[
+        [xls.TextCellValue('Total usuarios'), xls.IntCellValue(d.totalUsuarios)],
+        [xls.TextCellValue('Usuarios admin'), xls.IntCellValue(d.usuariosAdmin)],
+        [xls.TextCellValue('Usuarios regulares'), xls.IntCellValue(d.usuariosRegulares)],
+        [xls.TextCellValue('Ingresos hoy'), xls.IntCellValue(d.ingresosHoy)],
+        [xls.TextCellValue('Ingresos última semana'), xls.IntCellValue(d.ingresosSemana)],
+        [xls.TextCellValue('Ingresos último mes'), xls.IntCellValue(d.ingresosMes)],
+        [xls.TextCellValue('Activos últimos 30 días'), xls.IntCellValue(d.usuariosActivos30dias)],
+        [xls.TextCellValue('Usuarios vía Google'), xls.IntCellValue(d.usuariosGoogle)],
+        [xls.TextCellValue('Usuarios vía Email/Contraseña'), xls.IntCellValue(d.usuariosEmail)],
+        [xls.TextCellValue('Usuarios sin ningún ingreso registrado'), xls.IntCellValue(d.usuariosSinIngreso)],
+        [
+          xls.TextCellValue('Promedio de ingresos por usuario'),
+          xls.DoubleCellValue(
+            d.totalUsuarios == 0
+                ? 0
+                : d.todosUsuarios.fold<int>(0, (s, u) => s + u.totalIngresos) /
+                    d.totalUsuarios,
+          ),
+        ],
+        [
+          xls.TextCellValue('Promedio de minutos de uso por usuario'),
+          xls.DoubleCellValue(
+            d.totalUsuarios == 0 ? 0 : d.minutosUsoTotal / d.totalUsuarios,
+          ),
+        ],
+        [xls.TextCellValue('Minutos de uso total'), xls.IntCellValue(d.minutosUsoTotal)],
+        [
+          xls.TextCellValue('Horas de uso total'),
+          xls.TextCellValue(
+            '${d.minutosUsoTotal ~/ 60}h ${d.minutosUsoTotal % 60}m',
+          ),
+        ],
+        [xls.TextCellValue('Fecha de exportación'), xls.TextCellValue(DateTime.now().toString())],
+      ];
+      for (final fila in filasResumen) {
+        resumen.appendRow(fila);
+      }
+      for (var i = 0; i < 2; i++) {
+        resumen.setColumnWidth(i, 26);
+      }
+
+      // ---------- Hoja "Usuarios" ----------
+      final hojaUsuarios = excel['Usuarios'];
+      hojaUsuarios.appendRow([
+        xls.TextCellValue('Nombre'),
+        xls.TextCellValue('Email'),
+        xls.TextCellValue('Rol'),
+        xls.TextCellValue('Método de login'),
+        xls.TextCellValue('Último ingreso'),
+        xls.TextCellValue('Total ingresos'),
+      ]);
+      for (final u in d.todosUsuarios) {
+        final metodoLegible = u.metodo == 'google.com'
+            ? 'Google'
+            : u.metodo == 'password'
+                ? 'Email / Contraseña'
+                : u.metodo;
+        hojaUsuarios.appendRow([
+          xls.TextCellValue(u.nombre),
+          xls.TextCellValue(u.email),
+          xls.TextCellValue(u.role),
+          xls.TextCellValue(metodoLegible),
+          xls.TextCellValue(
+            u.ultimoIngreso.year == 2000 ? 'Sin registro' : u.ultimoIngreso.toString(),
+          ),
+          xls.IntCellValue(u.totalIngresos),
+        ]);
+      }
+      for (var i = 0; i < 6; i++) {
+        hojaUsuarios.setColumnWidth(i, 22);
+      }
+
+      // ---------- Hoja "Métodos de login" ----------
+      final hojaMetodos = excel['Metodos de login'];
+      hojaMetodos.appendRow([
+        xls.TextCellValue('Método'),
+        xls.TextCellValue('Cantidad'),
+      ]);
+      d.loginMethods.forEach((metodo, cantidad) {
+        final etiqueta = metodo == 'google.com'
+            ? 'Google'
+            : metodo == 'password'
+                ? 'Email / Contraseña'
+                : metodo;
+        hojaMetodos.appendRow([
+          xls.TextCellValue(etiqueta),
+          xls.IntCellValue(cantidad),
+        ]);
+      });
+
+      // ---------- Hoja "Registros por día" ----------
+      final hojaRegistros = excel['Registros por dia'];
+      hojaRegistros.appendRow([
+        xls.TextCellValue('Día'),
+        xls.TextCellValue('Nuevos registros'),
+      ]);
+      d.registrosPorDia.forEach((dia, cantidad) {
+        hojaRegistros.appendRow([
+          xls.TextCellValue(dia.replaceAll('\n', ' ')),
+          xls.IntCellValue(cantidad),
+        ]);
+      });
+
+      // Quitar la hoja default vacía que crea el paquete, si sigue existiendo
+      if (nombreHojaDefault != null &&
+          excel.sheets.containsKey(nombreHojaDefault) &&
+          nombreHojaDefault != 'Resumen') {
+        excel.delete(nombreHojaDefault);
+      }
+
+      final bytes = excel.save();
+      if (bytes == null) {
+        throw Exception('No se pudo generar el archivo Excel');
+      }
+
+      final dir = await getTemporaryDirectory();
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final path = '${dir.path}/reporte_admin_$timestamp.xlsx';
+      final file = File(path);
+      await file.writeAsBytes(bytes, flush: true);
+
+      if (!mounted) return;
+
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(path)],
+          text: 'Reporte administrativo — ${DateTime.now().toString().split('.').first}',
+          subject: 'Reporte administrativo',
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al exportar: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _exportando = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -246,6 +421,23 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
         backgroundColor: _kPrimaryDark,
         foregroundColor: Colors.white,
         elevation: 0,
+        actions: [
+          if (_data != null)
+            IconButton(
+              tooltip: 'Exportar a Excel',
+              icon: _exportando
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Icon(Icons.file_download_rounded),
+              onPressed: _exportando ? null : _exportarExcel,
+            ),
+        ],
       ),
       body: _loading
           ? _buildLoader()

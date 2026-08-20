@@ -165,16 +165,36 @@ class ClinicDetailScreen extends StatelessWidget {
     final distance = _getDistance();
 
     return Scaffold(
-      body: CustomScrollView(
+      // SafeArea evita que el contenido (y sobre todo los botones finales
+      // "Cómo llegar" / "Llamar") quede pegado a la barra de navegación del
+      // sistema, que es justo lo que hacía fácil tocar un botón del celular
+      // en vez de la app.
+      body: SafeArea(
+        bottom: true,
+        child: CustomScrollView(
         slivers: [
           SliverAppBar(
             expandedHeight: 200,
+            // Antes el toolbar colapsado usaba la altura estándar de
+            // Android (56px), muy angosta para un nombre largo — por eso
+            // el texto se veía diminuto o se cortaba/superponía con el
+            // contenido de abajo (la línea roja que marcaste). Con más
+            // alto en el estado colapsado, el nombre tiene espacio real
+            // para 2 líneas con una letra legible, y el contenido de abajo
+            // arranca limpio, después del encabezado.
+            toolbarHeight: 76,
             pinned: true,
             backgroundColor: const Color(0xFF5B4FCF),
             flexibleSpace: FlexibleSpaceBar(
+              titlePadding: const EdgeInsetsDirectional.only(start: 56, bottom: 12, end: 16),
               title: Text(
                 clinic.name,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
+                  fontSize: 19,
+                  fontWeight: FontWeight.w700,
+                  height: 1.15,
                   shadows: [Shadow(color: Colors.black, blurRadius: 2)],
                 ),
               ),
@@ -347,6 +367,15 @@ class ClinicDetailScreen extends StatelessWidget {
                           runSpacing: 8,
                           children: clinic.services.map((service) {
                             return Container(
+                              // Sin esto, un servicio con texto largo (como
+                              // "Operatoria dental (rellenos, incrustaciones,
+                              // carillas)") se salía de la pantalla, porque
+                              // Wrap no limita el ancho de cada hijo por sí
+                              // solo — cada chip crecía tanto como su texto
+                              // lo pidiera.
+                              constraints: BoxConstraints(
+                                maxWidth: MediaQuery.of(context).size.width - 32,
+                              ),
                               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                               decoration: BoxDecoration(
                                 color: const Color(0xFFF3F1FC),
@@ -355,14 +384,21 @@ class ClinicDetailScreen extends StatelessWidget {
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Icon(Icons.check_circle, size: 16, color: Color(0xFF3B2F8C)),
+                                  const Padding(
+                                    padding: EdgeInsets.only(top: 2),
+                                    child: Icon(Icons.check_circle, size: 16, color: Color(0xFF3B2F8C)),
+                                  ),
                                   const SizedBox(width: 6),
-                                  Text(
-                                    service,
-                                    style: const TextStyle(
-                                      color: Color(0xFF3B2F8C),
-                                      fontWeight: FontWeight.w500,
+                                  Flexible(
+                                    child: Text(
+                                      service,
+                                      softWrap: true,
+                                      style: const TextStyle(
+                                        color: Color(0xFF3B2F8C),
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -401,6 +437,14 @@ class ClinicDetailScreen extends StatelessWidget {
                       ],
                     ),
 
+                  // FIX: antes el Expanded del botón "Llamar" estaba dentro
+                  // de un Padding, y el Padding era el hijo directo del Row.
+                  // Expanded solo puede ser hijo directo de un Row/Column/Flex;
+                  // al quedar un nivel más adentro, Flutter tronaba con
+                  // "Incorrect use of ParentDataWidget" al montar el widget
+                  // (justo lo que salía en el log), y la pantalla completa se
+                  // caía a un rectángulo gris en vez de mostrar el detalle.
+                  // Ahora el Expanded envuelve al Padding, no al revés.
                   Row(
                     children: [
                       Expanded(
@@ -417,9 +461,9 @@ class ClinicDetailScreen extends StatelessWidget {
                         ),
                       ),
                       if (clinic.phone != null && clinic.phone!.isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.only(left: 12),
-                          child: Expanded(
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 12),
                             child: ElevatedButton.icon(
                               onPressed: () => _launchPhone(context),
                               icon: const Icon(Icons.phone),
@@ -441,6 +485,7 @@ class ClinicDetailScreen extends StatelessWidget {
             ),
           ),
         ],
+        ),
       ),
     );
   }
