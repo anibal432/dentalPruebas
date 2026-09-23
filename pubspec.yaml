@@ -1,11 +1,11 @@
-name: dental_umg
-description: Aplicación móvil para consejos y análisis dental
+name: ia_gt
+description: App móvil con ia
 publish_to: 'none'
-version: 1.0.0+21
-
+version: 1.0.0+47
+ 
 environment:
   sdk: '>=3.0.0 <4.0.0'
-  #ejemplo de edicionnnn
+ 
 dependencies:
   flutter:
     sdk: flutter
@@ -24,7 +24,10 @@ dependencies:
   # ==============================
   tflite_flutter: ^0.12.1
   image_picker: ^1.2.1
-
+  # ==============================
+  # IA - Validación previa de imagen (ML Kit)
+  # ==============================
+  google_mlkit_image_labeling: ^0.15.0
   # ==============================
   # Firebase
   # ==============================
@@ -35,7 +38,7 @@ dependencies:
   # ==============================
   # Google Sign-In
   # ==============================
-  google_sign_in: ^7.2.0
+  google_sign_in: ^6.2.2
 
   # ==============================
   # Geolocalización y Mapas
