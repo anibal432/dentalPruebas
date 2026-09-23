@@ -118,14 +118,6 @@
           }
         },
         {
-          "client_id": "287875927706-52fubkosnj7hbbj5uj376p7340lp2no4.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.ia.gt",
-            "certificate_hash": "a80f36ed2850f05c055abc4b492de6a19669bc1c"
-          }
-        },
-        {
           "client_id": "287875927706-96ooa8pohhbpukreqrdt9r9filcvo7en.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
